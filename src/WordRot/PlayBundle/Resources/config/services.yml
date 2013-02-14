@@ -1,7 +1,9 @@
 parameters:
-#    word_rot_play.example.class: WordRot\PlayBundle\Example
+   word_rot_play.wordnik.class: WordRot\PlayBundle\Service\Wordnik
+   word_rot_play.wordnik.api_url: 'http://api.wordnik.com/v4'
 
 services:
-#    word_rot_play.example:
-#        class: %word_rot_play.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+   # NOTE: Must define `wordnik_api_key` in parameters.yml
+   word_rot_play.wordnik:
+       class: %word_rot_play.wordnik.class%
+       arguments: [@service_container, %wordnik_api_key%, %word_rot_play.wordnik.api_url%]
