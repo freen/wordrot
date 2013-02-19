@@ -3,7 +3,15 @@ parameters:
    word_rot_play.wordnik.api_url: 'http://api.wordnik.com/v4'
 
 services:
-   # NOTE: Must define `wordnik_api_key` in parameters.yml
-   word_rot_play.wordnik:
-       class: %word_rot_play.wordnik.class%
-       arguments: [@service_container, %wordnik_api_key%, %word_rot_play.wordnik.api_url%]
+    word_rot_play.wordnik:
+        # NOTE: Must define `wordnik_api_key` in parameters.yml
+        class: %word_rot_play.wordnik.class%
+        arguments: [@service_container, %wordnik_api_key%, %word_rot_play.wordnik.api_url%]
+
+    wordnik.security.authentication.provider:
+        class:  WordRot\PlayBundle\Security\Authentication\Provider\WordnikProvider
+        arguments: ['', %kernel.cache_dir%/security/nonces]
+
+    wordnik.security.authentication.listener:
+        class:  WordRot\PlayBundle\Security\Firewall\WordnikListener
+        arguments: [@security.context, @security.authentication.manager]

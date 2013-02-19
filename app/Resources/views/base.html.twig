@@ -7,6 +7,15 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
+        <header>
+            <div class="account-summary">
+            {% if app.user %}
+            Your username is {{ app.user.username }}.
+            {% else %}
+            You aren't logged in.
+            {% endif %}
+            </div>
+        </header>
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
