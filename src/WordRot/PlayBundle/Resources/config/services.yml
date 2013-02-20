@@ -10,7 +10,7 @@ services:
 
     wordnik.security.authentication.provider:
         class:  WordRot\PlayBundle\Security\Authentication\Provider\WordnikProvider
-        arguments: ['', %kernel.cache_dir%/security/nonces]
+        arguments: ['', @word_rot_play.wordnik]
 
     wordnik.security.authentication.listener:
         class:  WordRot\PlayBundle\Security\Firewall\WordnikListener
