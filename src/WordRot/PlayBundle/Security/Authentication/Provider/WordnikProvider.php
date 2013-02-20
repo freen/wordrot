@@ -13,6 +13,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use WordRot\PlayBundle\Security\Authentication\Token\WordnikUserToken;
 use WordRot\PlayBundle\Service\Wordnik;
 
+use FOS\UserBundle\Security\UserProvider;
+
 
 class WordnikProvider implements AuthenticationProviderInterface {
 
