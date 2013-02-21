@@ -10,12 +10,18 @@ class WordnikUserToken extends AbstractToken
     public $digest;
     public $nonce;
 
-    public function __construct(array $roles = array())
+    protected $username;
+
+    public function __construct($username, $password, $providerKey, array $roles = array())
     {
         parent::__construct($roles);
 
         // If the user has roles, consider it authenticated
         $this->setAuthenticated(count($roles) > 0);
+
+        $this->username = $username;
+        $this->password = $password;
+        $this->providerKey = $providerKey;
     }
 
     public function getCredentials()
