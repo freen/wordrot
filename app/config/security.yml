@@ -10,36 +10,40 @@ security:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
-    providers:
-        fos_userbundle:
-            id: fos_user.user_provider.username
-
     # providers:
-    #     in_memory:
-    #         memory:
-    #             users:
-    #                 user: { password: userpass, roles: [ 'ROLE_USER' ] }
-    #                 admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+    #     fos_userbundle:
+    #         id: fos_user.user_provider.username
+
+    providers:
+        in_memory:
+            memory:
+                users:
+                    user: { password: userpass, roles: [ 'ROLE_USER' ] }
+                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+
+    # firewalls:
+    #     wordnik_secured:
+    #         provider: fos_userbundle
+    #         pattern: ^/play
+    #         form_login:
+    #             # provider: in_memory
+    #             csrf_provider: form.csrf_provider
+    #             login_path:  /login # needed?
+    #             check_path:  /login # needed?
+    #         logout:       true
+    #         anonymous:    ~
+    #         wordnik:      true
 
     firewalls:
         wordnik_secured:
             pattern: ^/play
+            logout: ~
+            # anonymous: ~
+            wordnik: true
             form_login:
-                # provider: in_memory
-                provider: fos_userbundle
-                csrf_provider: form.csrf_provider
-            logout:       true
-            anonymous:    true
-            wordnik:      true
-
-    # firewalls:
-    #     secured_area:
-    #         logout: ~
-    #         pattern:    ^/
-    #         anonymous: ~
-    #         form_login:
-    #             login_path:  /login
-    #             check_path:  /login_check
+                provider: in_memory
+                login_path:  /login
+                check_path:  /login_check
 
     access_control:
         - { path: ^/play, roles: ROLE_USER }
