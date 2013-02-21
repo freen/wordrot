@@ -8,10 +8,11 @@ services:
         class: %word_rot_play.wordnik.class%
         arguments: [@service_container, %wordnik_api_key%, %word_rot_play.wordnik.api_url%]
 
-    wordnik.security.authentication.provider:
+    security.authentication.provider.wordnik:
         class:  WordRot\PlayBundle\Security\Authentication\Provider\WordnikProvider
         arguments: ['', @word_rot_play.wordnik]
 
-    wordnik.security.authentication.listener:
+    security.authentication.listener.wordnik:
         class:  WordRot\PlayBundle\Security\Firewall\WordnikListener
-        arguments: [@security.context, @security.authentication.manager]
+        abstract: true
+        parent: security.authentication.listener.abstract

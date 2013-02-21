@@ -7,26 +7,13 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
+use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 
-class WordnikFactory implements SecurityFactoryInterface
+class WordnikFactory extends AbstractFactory
 {
-    public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint)
-    {
-        $providerId = 'security.authentication.provider.wordnik.'.$id;
-        $container
-            ->setDefinition($providerId, new DefinitionDecorator('wordnik.security.authentication.provider'))
-            ->replaceArgument(0, new Reference($userProvider))
-        ;
-
-        $listenerId = 'security.authentication.listener.wordnik.'.$id;
-        $listener = $container->setDefinition($listenerId, new DefinitionDecorator('wordnik.security.authentication.listener'));
-
-        return array($providerId, $listenerId, $defaultEntryPoint);
-    }
-
     public function getPosition()
     {
-        return 'pre_auth';
+        return 'form';
     }
 
     public function getKey()
@@ -36,5 +23,44 @@ class WordnikFactory implements SecurityFactoryInterface
 
     public function addConfiguration(NodeDefinition $node)
     {
+        parent::addConfiguration($node);
+    }
+
+    protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
+    {
+        $provider = 'security.authentication.provider.wordnik.'.$id;
+        $container
+            ->setDefinition($provider, new DefinitionDecorator('security.authentication.provider.wordnik'))
+            ->replaceArgument(0, new Reference($userProviderId))
+            //->replaceArgument(2, $id)
+        ;
+
+        return $provider;
+    }
+
+    protected function createListener($container, $id, $config, $userProvider)
+    {
+        $listenerId = $this->getListenerId();
+        $listener = new DefinitionDecorator($listenerId);
+        $listener->replaceArgument(4, $id);
+        $listener->replaceArgument(5, new Reference($this->createAuthenticationSuccessHandler($container, $id, $config)));
+        $listener->replaceArgument(6, new Reference($this->createAuthenticationFailureHandler($container, $id, $config)));
+        $listener->replaceArgument(7, array_intersect_key($config, $this->options));
+
+
+        $listenerId .= '.'.$id;
+        $container->setDefinition($listenerId, $listener);
+
+        return $listenerId;
+    }
+
+    protected function getListenerId()
+    {
+        return 'security.authentication.listener.wordnik';
+    }
+
+    protected function isRememberMeAware($config)
+    {
+        return false;
     }
 }

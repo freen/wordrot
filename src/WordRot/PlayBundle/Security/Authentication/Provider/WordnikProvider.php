@@ -21,7 +21,7 @@ class WordnikProvider implements AuthenticationProviderInterface {
     protected $wordnik;
 	protected $userProvider;
 
-    public function __construct(UserProvider $userProvider, Wordnik $wordnik)
+    public function __construct(UserProviderInterface $userProvider, Wordnik $wordnik)
     {
         $this->wordnik = $wordnik;
         $this->userProvider = $userProvider;
