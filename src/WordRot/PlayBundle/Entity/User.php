@@ -2,16 +2,16 @@
 
 namespace WordRot\PlayBundle\Entity;
 
-use FOS\UserBundle\Entity\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * User
  *
- * @ORM\Table(name="fos_user")
+ * @ORM\Table(name="wordnik_user")
  * @ORM\Entity(repositoryClass="WordRot\PlayBundle\Entity\UserRepository")
  */
-class User extends BaseUser
+class User implements UserInterface, \Serializable
 {
     /**
      * @var integer
@@ -21,6 +21,11 @@ class User extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\Column(type="string", length=30, unique=true)
+     */
+    private $username;
 
     /**
      * @var integer
@@ -57,6 +62,32 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Get username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * NOT STORED, however definition is obligatory.
+     */
+    public function getPassword()
+    {
+        return '';
+    }
+
+    /**
+     * NOT STORED, however definition is obligatory.
+     */
+    public function getSalt()
+    {
+        return '';
     }
 
     /**
@@ -127,5 +158,28 @@ class User extends BaseUser
     {
         return $this->auth_token;
     }
+
+    /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+        ));
+    }
+
+    /**
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+        ) = unserialize($serialized);
+    }
+
+    /** Unnecessary, but definition is obligatory. */
+    public function eraseCredentials() { }
 
 }

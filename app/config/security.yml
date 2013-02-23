@@ -10,76 +10,21 @@ security:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
-    # providers:
-    #     fos_userbundle:
-    #         id: fos_user.user_provider.username
-
     providers:
-        in_memory:
-            memory:
-                users:
-                    user: { password: userpass, roles: [ 'ROLE_USER' ] }
-                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
-
-    # firewalls:
-    #     wordnik_secured:
-    #         provider: fos_userbundle
-    #         pattern: ^/play
-    #         form_login:
-    #             # provider: in_memory
-    #             csrf_provider: form.csrf_provider
-    #             login_path:  /login # needed?
-    #             check_path:  /login # needed?
-    #         logout:       true
-    #         anonymous:    ~
-    #         wordnik:      true
+        wordnik_users:
+            entity: { class: WordRotPlayBundle:User, property: username }
 
     firewalls:
         wordnik_secured:
             pattern: ^/play
             logout: ~
-            # anonymous: ~
+            anonymous: ~
             wordnik: true
             form_login:
-                provider: in_memory
+                provider: wordnik_users
                 login_path:  /login
                 check_path:  /login_check
 
     access_control:
         - { path: ^/play, roles: ROLE_USER }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-
-# security:
-#     encoders:
-#         FOS\UserBundle\Model\UserInterface: sha512
-
-#     role_hierarchy:
-#         ROLE_ADMIN:       ROLE_USER
-#         ROLE_SUPER_ADMIN: ROLE_ADMIN
-
-#     providers:
-#         fos_userbundle:
-#             id: fos_user.user_provider.username
-
-#     firewalls:
-#         dev:
-#             pattern:  ^/(_(profiler|wdt)|css|images|js)/
-#             security: false
-#         main:
-#             pattern: ^/
-#             form_login:
-#                 provider: fos_userbundle
-#                 csrf_provider: form.csrf_provider
-#             logout:       true
-#             anonymous:    true
-
-
-#     access_control:
-#         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-
-#         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-#         #
-#         # You must uncomment the two following rules to restrict access to paths
-#         # starting with the /_internal prefix to only localhost
-#         #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
-#         #- { path: ^/_internal/secure, roles: ROLE_NO_ACCESS }
