@@ -24,6 +24,14 @@ class WordnikUserToken extends AbstractToken
         $this->providerKey = $providerKey;
     }
 
+    public function getPassword() {
+        return $this->password;
+    }
+
+    public function getUsername() {
+        return $this->username;
+    }
+
     public function getCredentials()
     {
         return '';

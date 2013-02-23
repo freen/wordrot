@@ -3,66 +3,30 @@
 namespace WordRot\PlayBundle\Security\Authentication\Provider;
 
 use Symfony\Component\Security\Core\Authentication\Provider;
-
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\NonceExpiredException;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 use WordRot\PlayBundle\Security\Authentication\Token\WordnikUserToken;
 use WordRot\PlayBundle\Service\Wordnik;
-
-use FOS\UserBundle\Security\UserProvider;
-
+use WordRot\PlayBundle\Entity\User;
 
 class WordnikProvider implements AuthenticationProviderInterface {
 
+    protected $userProvider;
     protected $wordnik;
-	protected $userProvider;
+    protected $doctrine;
+    protected $em;
 
-    public function __construct(UserProviderInterface $userProvider, Wordnik $wordnik)
+    public function __construct(UserProviderInterface $userProvider, Wordnik $wordnik, $doctrine)
     {
-        $this->wordnik = $wordnik;
         $this->userProvider = $userProvider;
-    }
-
-    /**
-     * Does additional checks on the user and token (like validating the
-     * credentials).
-     *
-     * @param UserInterface         $user  The retrieved UserInterface instance
-     * @param WordnikUserToken $token The WordnikUserToken token to be authenticated
-     *
-     * @throws AuthenticationException if the credentials could not be validated
-     */
-    protected function checkAuthentication(UserInterface $user, WordnikUserToken $token)
-    {
-
-        $currentUser = $token->getUser();
-        if ($currentUser instanceof UserInterface) {
-
-			$authResponse = $this->wordnik->authenticate($username, $password);
-
-            // if ($currentUser->getPassword() !== $user->getPassword()) {
-            //     throw new BadCredentialsException('The credentials were changed from another session.');
-            // }
-
-            /**
-             * This is the next milestone: get to this point.
-             */
-			var_dump("\$authResponse", $authResponse);
-			exit;
-
-        } else {
-            if ("" === ($presentedPassword = $token->getCredentials())) {
-                throw new BadCredentialsException('The presented password cannot be empty.');
-            }
-
-            if (!$this->encoderFactory->getEncoder($user)->isPasswordValid($user->getPassword(), $presentedPassword, $user->getSalt())) {
-                throw new BadCredentialsException('The presented password is invalid.');
-            }
-        }
+        $this->wordnik = $wordnik;
+        $this->doctrine = $doctrine;
+        $this->em = $doctrine->getEntityManager();
     }
 
     public function supports(TokenInterface $token)
@@ -72,72 +36,45 @@ class WordnikProvider implements AuthenticationProviderInterface {
 
     public function authenticate(TokenInterface $token)
     {
-        $user = $this->userProvider->loadUserByUsername($token->getUsername());
+        $username = $token->getUsername();
 
-        if ($user && $this->validateDigest($token->digest, $token->nonce, $token->created, $user->getPassword())) {
-            $authenticatedToken = new WsseUserToken($user->getRoles());
-            $authenticatedToken->setUser($user);
-
-            return $authenticatedToken;
+        try {
+            $user = $this->userProvider->loadUserByUsername($username);
+        } catch (UsernameNotFoundException $notFound) {
+            // The user has never been loaded before. 
+            // Don't persist until the authentication is successful.)
+            $user = new User();
+            $user->setUsername($username);
         }
 
-        throw new AuthenticationException('The WSSE authentication failed.');
+        // Attempt Wordnik API authentication.
+        try {
+            $authResponse = $this->wordnik->authenticate($username, $token->getPassword());
+        } catch(\Exception $errorResponse) {
+
+            // The HTTP response code has to be parsed from the Exception message.
+            $matches = array();
+            preg_match("/response code: (\d{3})$/", $errorResponse->getMessage(), $matches);
+            $responseCode = $matches[1];
+
+            // Process HTTP response code
+            switch($responseCode) {
+                case '403':
+                    // Incorrect user/pass
+                    throw new AuthenticationException('Wordnik authentication failed. Incorrect username or password.');
+                case '500':
+                    throw new AuthenticationException('Wordnik authentication failed. An error occurred during the request. Try again later.');
+            }
+        }
+
+        // Store user record
+        $user->setRoles(array('ROLE_USER'));
+        $this->em->persist($user);
+        $this->em->flush();
+
+        $authenticatedToken = new WordnikUserToken($user->getRoles());
+        $authenticatedToken->setUser($user);
+        return $authenticatedToken;
     }
 
 }
-
-
-// <?php
-
-// // src/Acme/DemoBundle/Security/Authentication/Provider/WsseProvider.php
-// namespace Acme\DemoBundle\Security\Authentication\Provider;
-
-// class WsseProvider implements AuthenticationProviderInterface
-// {
-//     private $userProvider;
-//     private $cacheDir;
-
-//     public function __construct(UserProviderInterface $userProvider, $cacheDir)
-//     {
-//         $this->userProvider = $userProvider;
-//         $this->cacheDir     = $cacheDir;
-//     }
-
-//     public function authenticate(TokenInterface $token)
-//     {
-//         $user = $this->userProvider->loadUserByUsername($token->getUsername());
-
-//         if ($user && $this->validateDigest($token->digest, $token->nonce, $token->created, $user->getPassword())) {
-//             $authenticatedToken = new WsseUserToken($user->getRoles());
-//             $authenticatedToken->setUser($user);
-
-//             return $authenticatedToken;
-//         }
-
-//         throw new AuthenticationException('The WSSE authentication failed.');
-//     }
-
-//     protected function validateDigest($digest, $nonce, $created, $secret)
-//     {
-//         // Expire timestamp after 5 minutes
-//         if (time() - strtotime($created) > 300) {
-//             return false;
-//         }
-
-//         // Validate nonce is unique within 5 minutes
-//         if (file_exists($this->cacheDir.'/'.$nonce) && file_get_contents($this->cacheDir.'/'.$nonce) + 300 > time()) {
-//             throw new NonceExpiredException('Previously used nonce detected');
-//         }
-//         file_put_contents($this->cacheDir.'/'.$nonce, time());
-
-//         // Validate Secret
-//         $expected = base64_encode(sha1(base64_decode($nonce).$created.$secret, true));
-
-//         return $digest === $expected;
-//     }
-
-//     public function supports(TokenInterface $token)
-//     {
-//         return $token instanceof WsseUserToken;
-//     }
-// }

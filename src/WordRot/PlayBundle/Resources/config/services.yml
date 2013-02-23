@@ -10,7 +10,7 @@ services:
 
     security.authentication.provider.wordnik:
         class:  WordRot\PlayBundle\Security\Authentication\Provider\WordnikProvider
-        arguments: ['', @word_rot_play.wordnik]
+        arguments: ['', @word_rot_play.wordnik, @doctrine]
 
     security.authentication.listener.wordnik:
         class:  WordRot\PlayBundle\Security\Firewall\WordnikListener
