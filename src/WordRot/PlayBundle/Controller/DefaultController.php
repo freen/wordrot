@@ -7,16 +7,6 @@ use Symfony\Component\Security\Core\SecurityContext;
 
 class DefaultController extends Controller
 {
-    private function getWordnikUser()
-    {
-        $Wordnik = $this->get('word_rot_play.wordnik');
-        $User = $Wordnik->getUser();
-        if(is_null($User)) {
-            $UserInfo = $Wordnik->authenticate('freen','Yuquh4Ka');
-            $User = $Wordnik->getUser();
-        }
-        return $User;
-    }
 
     public function indexAction()
     {

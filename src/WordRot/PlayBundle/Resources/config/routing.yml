@@ -7,7 +7,7 @@ login:
     defaults:  { _controller: WordRotPlayBundle:Default:login }
 
 login_check:
-    pattern:   /login_check
+    pattern:   /play_check
 
 logout:
     pattern:   /logout
