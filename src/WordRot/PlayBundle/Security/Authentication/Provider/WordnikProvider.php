@@ -68,11 +68,13 @@ class WordnikProvider implements AuthenticationProviderInterface {
         }
 
         // Store user record
-        $user->setRoles(array('ROLE_USER'));
+        $user->setThirdPartyId($authResponse->userId);
+        $user->setUserSignature($authResponse->userSignature);
+        $user->setAuthToken($authResponse->token);
         $this->em->persist($user);
         $this->em->flush();
 
-        $authenticatedToken = new WordnikUserToken($user->getRoles());
+        $authenticatedToken = new WordnikUserToken($username, '', '', $user->getRoles());
         $authenticatedToken->setUser($user);
         return $authenticatedToken;
     }

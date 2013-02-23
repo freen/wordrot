@@ -50,8 +50,6 @@ class User implements UserInterface, \Serializable
 
     public function __construct()
     {
-        parent::__construct();
-        // your own logic
     }
 
     /**
@@ -72,6 +70,12 @@ class User implements UserInterface, \Serializable
     public function getUsername()
     {
         return $this->username;
+    }
+
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
     }
 
     /**
