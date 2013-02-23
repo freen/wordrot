@@ -90,6 +90,11 @@ class User implements UserInterface, \Serializable
         return '';
     }
 
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
     /**
      * Set third_party_id
      *
