@@ -11,6 +11,7 @@ class WordnikUserToken extends AbstractToken
     public $nonce;
 
     protected $username;
+    protected $password;
 
     public function __construct($username, $password, $providerKey, array $roles = array())
     {
@@ -22,6 +23,7 @@ class WordnikUserToken extends AbstractToken
         $this->username = $username;
         $this->password = $password;
         $this->providerKey = $providerKey;
+        $this->created = new \DateTime();
     }
 
     public function getPassword() {

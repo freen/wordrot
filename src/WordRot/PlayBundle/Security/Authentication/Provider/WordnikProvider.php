@@ -51,19 +51,26 @@ class WordnikProvider implements AuthenticationProviderInterface {
         try {
             $authResponse = $this->wordnik->authenticate($username, $token->getPassword());
         } catch(\Exception $errorResponse) {
-
+            $errorMessage = $errorResponse->getMessage();
             // The HTTP response code has to be parsed from the Exception message.
             $matches = array();
-            preg_match("/response code: (\d{3})$/", $errorResponse->getMessage(), $matches);
-            $responseCode = $matches[1];
+            preg_match("/response code: (\d{3})$/", $errorMessage, $matches);
 
-            // Process HTTP response code
-            switch($responseCode) {
-                case '403':
-                    // Incorrect user/pass
-                    throw new AuthenticationException('Wordnik authentication failed. Incorrect username or password.');
-                case '500':
-                    throw new AuthenticationException('Wordnik authentication failed. An error occurred during the request. Try again later.');
+            if(count($matches) > 1) {
+                $responseCode = $matches[1];
+
+                // Process HTTP response code
+                switch($responseCode) {
+                    case '403':
+                        // Incorrect user/pass
+                        throw new AuthenticationException('Wordnik authentication failed. Incorrect username or password.');
+                    case '500':
+                        throw new AuthenticationException('Wordnik authentication failed. An error occurred during the request. Try again later.');
+                    default:
+                        throw new AuthenticationException("Wordnik authentication failed. An unknown error occurred. ($errorMessage)");
+                }
+            } else {
+                throw new AuthenticationException("Wordnik authentication failed. An unknown error occurred. ($errorMessage)");
             }
         }
 

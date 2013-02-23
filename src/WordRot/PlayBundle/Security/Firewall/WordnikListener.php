@@ -46,7 +46,9 @@ class WordnikListener extends AbstractAuthenticationListener
 
         $request->getSession()->set(SecurityContextInterface::LAST_USERNAME, $username);
 
-        return $this->authenticationManager->authenticate(new WordnikUserToken($username, $password, $this->providerKey));
+        $attemptToken = new WordnikUserToken($username, $password, $this->providerKey);
+        $authenticationResult = $this->authenticationManager->authenticate($attemptToken);
+        return $authenticationResult;
     }
 
     protected function requiresAuthentication(Request $request)
