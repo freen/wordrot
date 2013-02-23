@@ -18,15 +18,14 @@ class WordnikProvider implements AuthenticationProviderInterface {
 
     protected $userProvider;
     protected $wordnik;
-    protected $doctrine;
-    protected $em;
+    protected $entityManager;
 
-    public function __construct(UserProviderInterface $userProvider, Wordnik $wordnik, $doctrine)
+    public function __construct(UserProviderInterface $userProvider, Wordnik $wordnik, $container)
     {
         $this->userProvider = $userProvider;
         $this->wordnik = $wordnik;
-        $this->doctrine = $doctrine;
-        $this->em = $doctrine->getEntityManager();
+        $this->entityManager = $container->get('doctrine')->getEntityManager();
+        $this->container = $container;
     }
 
     public function supports(TokenInterface $token)
@@ -37,15 +36,6 @@ class WordnikProvider implements AuthenticationProviderInterface {
     public function authenticate(TokenInterface $token)
     {
         $username = $token->getUsername();
-
-        try {
-            $user = $this->userProvider->loadUserByUsername($username);
-        } catch (UsernameNotFoundException $notFound) {
-            // The user has never been loaded before. 
-            // Don't persist until the authentication is successful.)
-            $user = new User();
-            $user->setUsername($username);
-        }
 
         // Attempt Wordnik API authentication.
         try {
@@ -74,15 +64,30 @@ class WordnikProvider implements AuthenticationProviderInterface {
             }
         }
 
-        // Store user record
-        $user->setThirdPartyId($authResponse->userId);
-        $user->setUserSignature($authResponse->userSignature);
+        try {
+            $user = $this->userProvider->loadUserByUsername($username);
+        } catch (UsernameNotFoundException $notFound) {
+            // The user has never been loaded before. 
+            // Don't persist until the authentication is successful.)
+            $user = new User();
+            $user->setUsername($username);
+            $user->setThirdPartyId($authResponse->userId);
+            $user->setUserSignature($authResponse->userSignature);
+            $this->entityManager->persist($user);
+        }
+
         $user->setAuthToken($authResponse->token);
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->entityManager->flush();
 
         $authenticatedToken = new WordnikUserToken($username, '', '', $user->getRoles());
         $authenticatedToken->setUser($user);
+
+        $securityContext = $this->container->get('security.context');
+        $securityContext->setToken($authenticatedToken);
+        
+        // $session = $this->container->get('session');
+        // $session->set('_security_wordnik_secured', serialize($authenticatedToken));
+
         return $authenticatedToken;
     }
 
