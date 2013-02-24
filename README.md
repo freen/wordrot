@@ -1,7 +1,8 @@
 WordRot
 ========================
 
-= Configuration =
+Configuration
+-------------
 
 Define the following parameters in your `parameters.yml`:
 
