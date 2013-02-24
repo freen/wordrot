@@ -11,10 +11,7 @@ class DefaultController extends Controller
     public function indexAction()
     {
     	$Wordnik = $this->get('word_rot_play.wordnik');
-    	// $WordLists = $Wordnik->getWordLists();
-        return $this->render('WordRotPlayBundle:Default:index.html.twig', array(
-        	// 'user' => $this->getWordnikUser()
-        ));
+        return $this->render('WordRotPlayBundle:Default:index.html.twig');
     }
 
     public function loginAction()

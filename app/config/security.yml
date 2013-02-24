@@ -21,7 +21,7 @@ security:
             anonymous: ~
             wordnik: true
             form_login:
-                # provider: wordnik_users
+                provider: wordnik_users
                 login_path:  /login
                 check_path:  /play_check
                 # on success
