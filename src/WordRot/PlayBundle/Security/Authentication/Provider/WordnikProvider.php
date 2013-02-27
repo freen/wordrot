@@ -31,17 +31,11 @@ class WordnikProvider implements AuthenticationProviderInterface {
 
     public function supports(TokenInterface $token)
     {
-        // var_dump($token);
-        // die();
-        // die('Called ' . __CLASS__ . '#' . __FUNCTION__ . ' with token class ' . get_class($token));
-
         return $token instanceof WordnikUserToken;
     }
 
     public function authenticate(TokenInterface $token)
     {
-        // die('Called ' . __CLASS__ . '#' . __FUNCTION__);
-
         $username = $token->getUsername();
 
         // Attempt Wordnik API authentication.
@@ -49,6 +43,7 @@ class WordnikProvider implements AuthenticationProviderInterface {
             $authResponse = $this->wordnik->authenticate($username, $token->getPassword());
         } catch(\Exception $errorResponse) {
             $errorMessage = $errorResponse->getMessage();
+            
             // The HTTP response code has to be parsed from the Exception message.
             $matches = array();
             preg_match("/response code: (\d{3})$/", $errorMessage, $matches);
@@ -94,10 +89,6 @@ class WordnikProvider implements AuthenticationProviderInterface {
         
         // $session = $this->container->get('session');
         // $session->set('_security_wordnik_secured', serialize($authenticatedToken));
-
-        // var_dump($authenticatedToken);exit;
-
-        // xdebug_break();
 
         return $authenticatedToken;
     }

@@ -24,6 +24,9 @@ security:
             anonymous: true
             wordnik:   true
             provider:  wordnik_users
+            wordnik:
+                default_target_path: play
+                check_path: login_check
             logout:
                 path:   logout
                 target: login

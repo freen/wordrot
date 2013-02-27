@@ -40,7 +40,6 @@ class WordnikFactory extends AbstractFactory
 
     protected function createListener($container, $id, $config, $userProvider)
     {
-        // die('Called ' . __CLASS__ . '#' . __FUNCTION__);
         $listenerId = $this->getListenerId();
         $listener = new DefinitionDecorator($listenerId);
         $listener->replaceArgument(4, $id);
@@ -48,11 +47,9 @@ class WordnikFactory extends AbstractFactory
         $listener->replaceArgument(6, new Reference($this->createAuthenticationFailureHandler($container, $id, $config)));
         $listener->replaceArgument(7, array_intersect_key($config, $this->options));
 
-
         $listenerId .= '.'.$id;
         $container->setDefinition($listenerId, $listener);
 
-        return $listenerId;
     }
 
     protected function getListenerId()
