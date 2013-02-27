@@ -50,6 +50,7 @@ class WordnikFactory extends AbstractFactory
         $listenerId .= '.'.$id;
         $container->setDefinition($listenerId, $listener);
 
+        return $listenerId;
     }
 
     protected function getListenerId()
