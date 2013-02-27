@@ -16,3 +16,4 @@ services:
         class:  WordRot\PlayBundle\Security\Firewall\WordnikListener
         abstract: true
         parent: security.authentication.listener.abstract
+        arguments: [@security.context, @security.authentication.manager]

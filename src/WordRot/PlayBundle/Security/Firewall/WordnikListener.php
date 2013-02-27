@@ -33,6 +33,8 @@ class WordnikListener extends AbstractAuthenticationListener
 
     protected function attemptAuthentication(Request $request)
     {
+        // die('Called ' . __CLASS__ . '#' . __FUNCTION__);
+
         if ($this->options['post_only'] && 'post' !== strtolower($request->getMethod())) {
             if (null !== $this->logger) {
                 $this->logger->debug(sprintf('Authentication method not supported: %s.', $request->getMethod()));
@@ -48,11 +50,16 @@ class WordnikListener extends AbstractAuthenticationListener
 
         $attemptToken = new WordnikUserToken($username, $password, $this->providerKey);
         $authenticationResult = $this->authenticationManager->authenticate($attemptToken);
+
+        // var_dump($authenticationResult);
+        // exit;
+
         return $authenticationResult;
     }
 
     protected function requiresAuthentication(Request $request)
     {
-        return $this->httpUtils->checkRequestPath($request, '/play');
+        // die('Called ' . __CLASS__ . '#' . __FUNCTION__);
+        return $this->httpUtils->checkRequestPath($request, '/play_check');
     }
 }

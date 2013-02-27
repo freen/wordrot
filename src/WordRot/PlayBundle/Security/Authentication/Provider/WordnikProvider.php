@@ -19,6 +19,7 @@ class WordnikProvider implements AuthenticationProviderInterface {
     protected $userProvider;
     protected $wordnik;
     protected $entityManager;
+    protected $container;
 
     public function __construct(UserProviderInterface $userProvider, Wordnik $wordnik, $container)
     {
@@ -30,11 +31,17 @@ class WordnikProvider implements AuthenticationProviderInterface {
 
     public function supports(TokenInterface $token)
     {
+        // var_dump($token);
+        // die();
+        // die('Called ' . __CLASS__ . '#' . __FUNCTION__ . ' with token class ' . get_class($token));
+
         return $token instanceof WordnikUserToken;
     }
 
     public function authenticate(TokenInterface $token)
     {
+        // die('Called ' . __CLASS__ . '#' . __FUNCTION__);
+
         $username = $token->getUsername();
 
         // Attempt Wordnik API authentication.
@@ -90,7 +97,7 @@ class WordnikProvider implements AuthenticationProviderInterface {
 
         // var_dump($authenticatedToken);exit;
 
-        xdebug_break();
+        // xdebug_break();
 
         return $authenticatedToken;
     }

@@ -40,6 +40,7 @@ class WordnikFactory extends AbstractFactory
 
     protected function createListener($container, $id, $config, $userProvider)
     {
+        // die('Called ' . __CLASS__ . '#' . __FUNCTION__);
         $listenerId = $this->getListenerId();
         $listener = new DefinitionDecorator($listenerId);
         $listener->replaceArgument(4, $id);

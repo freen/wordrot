@@ -53,6 +53,34 @@ class User implements UserInterface, \Serializable
     }
 
     /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->username,
+            $this->third_party_id,
+            $this->user_signature,
+            $this->auth_token
+        ));
+    }
+
+    /**
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->third_party_id,
+            $this->user_signature,
+            $this->auth_token
+        ) = unserialize($serialized);
+    }
+
+    /**
      * Get id
      *
      * @return integer 
@@ -166,26 +194,6 @@ class User implements UserInterface, \Serializable
     public function getAuthToken()
     {
         return $this->auth_token;
-    }
-
-    /**
-     * @see \Serializable::serialize()
-     */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-        ));
-    }
-
-    /**
-     * @see \Serializable::unserialize()
-     */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-        ) = unserialize($serialized);
     }
 
     /** Unnecessary, but definition is obligatory. */

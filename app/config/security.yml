@@ -17,16 +17,18 @@ security:
     firewalls:
         wordnik_secured:
             pattern: ^/play
-            logout: ~
-            anonymous: ~
+            logout: true
+            anonymous: false
             wordnik: true
-            form_login:
-                provider: wordnik_users
-                login_path:  /login
-                check_path:  /play_check
-                # on success
-                always_use_default_target_path: true
-                default_target_path: /play
+            provider: wordnik_users
+
+            # form_login:
+            #     provider: wordnik_users
+            #     login_path:  /login
+            #     check_path:  /play_check
+            #     # on success
+            #     always_use_default_target_path: true
+            #     default_target_path: /play
 
     access_control:
         - { path: ^/play, roles: ROLE_USER }
