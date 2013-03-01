@@ -2,27 +2,42 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}wordrot{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        {#
+            CSS
+        #}
         {% block stylesheets %}
         {% stylesheets filter='less' output='css/compiled-main.css'
             '@WordRotPlayBundle/Resources/public/less/*'
         %}
-           <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="all" />
+        <link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="all" />
         {% endstylesheets %}
         {% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+
     </head>
     <body>
         <header>
-            <div class="account-summary">
-            {% if app.user %}
-            Your username is {{ app.user.username }}.
-            {% else %}
-            You aren't logged in.
-            {% endif %}
-            </div>
+            {% block header %}{% endblock %}
         </header>
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+        {#
+            Base JS libraries
+        #}
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+        {#
+            Application JS
+        #}
+        {% javascripts
+            '@WordRotPlayBundle/Resources/public/js/backbone/models.js'
+            '@WordRotPlayBundle/Resources/public/js/backbone/views.js'
+            '@WordRotPlayBundle/Resources/public/js/application.js'
+            '@WordRotPlayBundle/Resources/public/js/*' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% endblock %}
     </body>
 </html>

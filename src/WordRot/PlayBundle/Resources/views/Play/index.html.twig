@@ -1,4 +1,13 @@
 {% extends '::base.html.twig' %}
 
+{% block header %}
+{{ parent() }}
+<div class="user-summary"></div>
+{% endblock %}
+
 {% block body %}
+
+{# Backbone View Templates #}
+{% include "WordRotPlayBundle:Play:backbone/view_templates.html.twig" %}
+
 {% endblock %}

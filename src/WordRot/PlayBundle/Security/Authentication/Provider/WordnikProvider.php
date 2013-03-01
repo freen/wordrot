@@ -84,12 +84,6 @@ class WordnikProvider implements AuthenticationProviderInterface {
         $authenticatedToken = new WordnikUserToken($username, '', '', $user->getRoles());
         $authenticatedToken->setUser($user);
 
-        // $securityContext = $this->container->get('security.context');
-        // $securityContext->setToken($authenticatedToken);
-        
-        // $session = $this->container->get('session');
-        // $session->set('_security_wordnik_secured', serialize($authenticatedToken));
-
         return $authenticatedToken;
     }
 
