@@ -9,11 +9,9 @@ var UserSummaryView = Backbone.View.extend({
 		this.render();
 	},
 	render: function() {
-		var variables = {
-			username: '',
-			wordCount: 0,
-			listCount: 0
-		};
+		var variables = this.model.toJSON();
+		variables.wordCount = 0;
+		variables.listCount = 0;
 		var template = _.template( $("#user_summary_template").html(), variables);
 		this.$el.html( template );
 	}

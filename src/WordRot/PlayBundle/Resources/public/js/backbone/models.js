@@ -2,6 +2,7 @@
  * Backbone Models
  * (@WordRotPlayBundle/Resources/public/js/backbone/models.js)
  */
- $(function(){
- 	
- })
+var User = Backbone.Model.extend({
+	urlRoot: ServerRoutes.playRootUrl + '/users',
+	initialize: function() {}
+});

@@ -11,3 +11,17 @@
 {% include "WordRotPlayBundle:Play:backbone/view_templates.html.twig" %}
 
 {% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+var ServerRoutes = {
+	playRootUrl: "{{ path('play') }}"
+};
+</script>
+{{ parent() }}
+<script type="text/javascript">
+$(function(){
+	WordRot.run({{ app.user.id }});
+});
+</script>
+{% endblock %}
