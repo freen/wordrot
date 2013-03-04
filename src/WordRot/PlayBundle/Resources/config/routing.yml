@@ -28,3 +28,10 @@ users_get:
     requirements:
         _method: GET
         id: "\d+"
+
+lists_get:
+    pattern: /play/lists
+    defaults:
+        _controller: WordRotPlayBundle:Lists:all
+        _format: json
+    requirements: { _method: GET }

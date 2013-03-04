@@ -23,6 +23,12 @@ class Wordnik {
 	const CACHE_KEY_PREFIX = "WordnikService";
 	const CACHE_KEY_SEPARATOR = "_";
 
+	/**
+	 * API & Cache Credentials.
+	 */
+	protected $authToken = null;
+	protected $cacheOwner = null;
+
 	public function __construct($container, $wordnik_api_key, $wordnik_api_url)
 	{
 		$this->container = $container;
@@ -46,14 +52,30 @@ class Wordnik {
 	}
 
 	/**
-	 * Returns a string to be used as a cache key for the given user and
-	 * resource.
-	 * @param  int $userId
+	 * Load credentials needed for cache designation and API calls. 
+	 * NOTE: Needs to be called after constructor to avoid circular dependency
+	 * injection.
+	 * @return null
+	 */
+	private function _initCredentials() {
+		if(in_array(null, array($this->authToken, $this->cacheOwner))) {
+			// Security Token contains user ID and auth token
+			$securityToken = $this->container->get('security.context')->getToken();
+			$user = $securityToken->getUser();
+			$this->authToken = $user->getAuthToken();
+			$this->cacheOwner = $user->getId();
+		}
+	}
+
+	/**
+	 * Returns a string to be used as a cache key for the current user and
+	 * given resource name.
 	 * @param  string $resourceName
 	 * @return string
 	 */
-	private function makeCacheKey($userId, $resourceName) {
-		$pieces = array(self::CACHE_KEY_PREFIX, $userId, $resourceName);
+	private function makeCacheKey($resourceName) {
+		$this->_initCredentials();
+		$pieces = array(self::CACHE_KEY_PREFIX, $this->cacheOwner, $resourceName);
 		return implode(self::CACHE_KEY_SEPARATOR, $pieces);
 	}
 	
@@ -72,21 +94,47 @@ class Wordnik {
 	public function expireUserCache($userId) { }
 
 	/**
-	 * @todo Call for lists
-	 * @todo Cache result
+	 * Yield word lists for current user.
+	 * @return  array Wordnik list objects.
 	 */
-	public function loadWordLists($userId, $authToken) {
-		$cacheKey = $this->makeCacheKey($userId, __FUNCTION__);
+	public function getLists() {
+		$this->_initCredentials();
+
+		// Attempt cache hit
+		$cacheKey = $this->makeCacheKey(__FUNCTION__);
 		$cachedResult = $this->cache->fetch($cacheKey);
 		if($cachedResult) {
-			$this->logger->debug("Loaded user word lists from cache (user ID $userId, cache key $cacheKey).");
+			$this->logger->debug("Loaded user word lists from cache (cache key $cacheKey).");
 			return $cachedResult;
 		}
 
-		$this->logger->debug("Requesting user word lists from API (user ID $userId, cache key $cacheKey). (Missed cache)");
-		$result = $this->accountApi->getWordListsForLoggedInUser($authToken);
+		$this->logger->debug("Requesting user word lists from API. (Missed cache - cache key $cacheKey)");
+		$result = $this->accountApi->getWordListsForLoggedInUser($this->authToken);
+
+		$listsById = array();
+		foreach($result as $WordnikList)
+			$listsById[$WordnikList->id] = $WordnikList;
+
 		$this->cache->save($cacheKey, $result);
 		return $result;
+	}
+
+	/**
+	 * Yield IDs of current user's Wordnik Lists which have $minCount or more
+	 * words.
+	 * @param int $minCount
+	 * @return array The list IDs.
+	 */
+	public function filterListsWithWords($minCount = 2) {
+		$this->_initCredentials();
+
+		$wordLists = $this->getLists();
+		$filteredListIds = array();
+		foreach($wordLists as $WordnikList)
+			if($WordnikList->numberWordsInList >= $minCount)
+				$filteredListIds[] = $WordnikList->id;
+
+		return $filteredListIds;
 	}
 
 }

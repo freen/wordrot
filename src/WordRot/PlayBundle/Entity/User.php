@@ -3,7 +3,10 @@
 namespace WordRot\PlayBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+
+use WordRot\PlayBundle\Entity\Game;
 
 /**
  * User
@@ -48,8 +51,18 @@ class User implements UserInterface, \Serializable
      */
     protected $auth_token;
 
+    /**
+     * This user's games.
+     * 
+     * @var ArrayCollection
+     * 
+     * @ORM\OneToMany(targetEntity="Game", mappedBy="user")
+     */
+    protected $games;
+
     public function __construct()
     {
+        $this->games = new ArrayCollection();
     }
 
     /**
