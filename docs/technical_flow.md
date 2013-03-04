@@ -37,8 +37,8 @@ API Response Caching
     - User Lists
 	    - Expired & refreshed each login
 	- List Words
-	    - Expired & refreshed at the end of each game
-	      - Thus the word list is stable throughout a game that is in progress
+	    - Expired & refreshed at the end of each game, so the word list is
+	      stable throughout a game that is in progress
 
 Steps
 -----

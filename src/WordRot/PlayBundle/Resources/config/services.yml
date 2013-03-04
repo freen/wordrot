@@ -3,6 +3,9 @@ parameters:
    word_rot_play.wordnik.api_url: 'http://api.wordnik.com/v4'
 
 services:
+    cache:
+        class: Doctrine\Common\Cache\ApcCache
+
     word_rot_play.wordnik:
         # NOTE: Must define `wordnik_api_key` in parameters.yml
         class: %word_rot_play.wordnik.class%
