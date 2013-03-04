@@ -21,7 +21,7 @@ var ServerRoutes = {
 {{ parent() }}
 <script type="text/javascript">
 $(function(){
-	WordRot.run({{ app.user.id }});
+	WordRot.run({{ app.user.id }}, {{ activeGame ? activeGame.getId : 'null' }});
 });
 </script>
 {% endblock %}

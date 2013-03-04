@@ -42,7 +42,7 @@ class Game
      * 
      * @var integer
      *
-     * @ORM\Column(type="tinyint")
+     * @ORM\Column(type="smallint")
      */
     protected $state;
 
@@ -58,5 +58,23 @@ class Game
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param int $state
+     * @return  Game
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+        return $this;
     }
 }

@@ -12,6 +12,8 @@ use WordRot\PlayBundle\Entity\User;
 class ListsController extends Controller
 {
 	/**
+     * All of the current user's lists.
+     * 
 	 * GET /play/lists/
 	 */
     public function allAction()
