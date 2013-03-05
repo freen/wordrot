@@ -21,7 +21,10 @@ var ServerRoutes = {
 {{ parent() }}
 <script type="text/javascript">
 $(function(){
-	WordRot.run({{ app.user.id }}, {{ activeGame ? activeGame.getId : 'null' }});
+	app.run({
+		user_id : {{ app.user.id }},
+		active_game_id : {{ activeGame ? activeGame.getId : 'null' }}
+	});
 });
 </script>
 {% endblock %}
