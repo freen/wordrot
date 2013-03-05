@@ -48,9 +48,9 @@ Steps
   - No active Game?
     - Prompt user to start a new game using a List which has at least two words
 	  - No User Lists?
-	    - Automatically create a List
+	     - Automatically create a List
 	  - No User Lists with Words?
-	    - Require the user to add at least two words to a List
+	     - Require the user to add at least two words to a List
   - No active Play?
     - Automatically create the next Play, selected from the Words, so far
       unused this Game, on the associated List
