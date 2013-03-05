@@ -1,13 +1,11 @@
 // js/views/appView.js
 
-var app = app || {};
-
 app.AppView = Backbone.View.extend({
 	initialize: function() {
 		console.log("Initializing AppView...");
 
 		// Fetch User
-		var user = new app.User({ id: app.params.user_id });
+		var user = new app.User({ id: app.params.userId });
 		user.fetch({
 			success: function (user) {
 
@@ -21,11 +19,5 @@ app.AppView = Backbone.View.extend({
 
 		this.render();
 	},
-	render: function() {
-		// var variables = this.model.toJSON();
-		// variables.wordCount = 0;
-		// variables.listCount = 0;
-		// var template = _.template( $("#user_summary_template").html(), variables);
-		// this.$el.html( template );
-	}
+	render: function() {}
 });

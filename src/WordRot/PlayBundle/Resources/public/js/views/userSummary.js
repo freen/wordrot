@@ -1,7 +1,5 @@
 // js/views/userSummary.js
 
-var app = app || {};
-
 app.UserSummaryView = Backbone.View.extend({
 	initialize: function() {
 		console.log("Initializing UserSummaryView...");

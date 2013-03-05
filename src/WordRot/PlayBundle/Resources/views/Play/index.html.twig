@@ -14,15 +14,17 @@
 
 {% block javascripts %}
 <script type="text/javascript">
-var ServerRoutes = {
-	playRootUrl: "{{ path('play') }}"
+var app = {
+	params: {
+		rootUrl: "{{ path('homepage') }}"
+	}
 };
 </script>
 {{ parent() }}
 <script type="text/javascript">
 $(function(){
 	app.run({
-		user_id : {{ app.user.id }},
+		userId : {{ app.user.id }},
 		active_game_id : {{ activeGame ? activeGame.getId : 'null' }}
 	});
 });
