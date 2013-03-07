@@ -29,7 +29,7 @@ class Game
 
     /**
      * The owning user.
-     * 
+     *
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="games")
@@ -39,7 +39,7 @@ class Game
     /**
      * Whether the game is active or complete. Defined by the entity's class
      * constants, STATE_ACTIVE and STATE_COMPLETE.
-     * 
+     *
      * @var integer
      *
      * @ORM\Column(type="smallint")
@@ -53,7 +53,7 @@ class Game
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {

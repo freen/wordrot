@@ -1,11 +1,41 @@
 <!-- Backbone View Templates -->
 
-{#
-	User Summary 
-#}
+{# User Summary #}
+
 <script type="text/template" id="user_summary_template">
 	<p class="user name"><%= username %></p>
 	<p><a href="{{ path('logout') }}">logout</a></p>
+</script>
+
+{# Word Prompt #}
+
+<script type="text/template" id="word_prompt_template">
+    <p class="definition"><%= definition %></p>
+    <form>
+        <input type="text" name="answer" />
+        <p><small>Type your answer and press "Enter"</small></p>
+    </form>
+</script>
+
+{# New Game #}
+
+<script type="text/template" id="new_game_prompt">
+    <h2>New rotation?</h2>
+    <p>Start a new game with one of these lists.</p>
+    <ul class="list_options"></ul>
+</script>
+
+{# New Game List Option #}
+{# To be incorporated into a <ul> which is appended to #new_game_prompt #}
+
+<script type="text/template" id="new_game_prompt_list_option">
+    <span class="list_name"><%= list_name %></span>
+    <span class="word_quantity"><%= word_quantity %></span>
+    <p class="list_description"><%= list_description %></p>
+    <form>
+        <input type="hidden" name="list_id" value="<%= list_id %>" />
+        <input type="submit" value="Use" />
+    </form>
 </script>
 
 <!-- End Backbone View Templates -->

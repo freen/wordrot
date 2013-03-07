@@ -78,7 +78,7 @@ class Wordnik {
 		$pieces = array(self::CACHE_KEY_PREFIX, $this->cacheOwner, $resourceName);
 		return implode(self::CACHE_KEY_SEPARATOR, $pieces);
 	}
-	
+
 	/**
 	 * Used by WordnikProvider, the Wordnik authentication provider.
      */

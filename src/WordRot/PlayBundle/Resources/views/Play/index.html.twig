@@ -7,26 +7,36 @@
 
 {% block body %}
 
-{# Backbone View Templates #}
-{% include "WordRotPlayBundle:Play:backbone/view_templates.html.twig" %}
+    {# Backbone View Templates #}
+    {% include "WordRotPlayBundle:Play:backbone/view_templates.html.twig" %}
+
+    {# Wrapper for new game prompt, used by js/views/newGame.js #}
+    <div class="new_game_prompt"></div>
+
+    {# Wrapper for prompt interface, used by js/views/prompt.js #}
+    <div class="word_prompt"></div>
 
 {% endblock %}
 
 {% block javascripts %}
-<script type="text/javascript">
-var app = {
-	params: {
-		rootUrl: "{{ path('homepage') }}"
-	}
-};
-</script>
-{{ parent() }}
-<script type="text/javascript">
-$(function(){
-	app.run({
-		userId : {{ app.user.id }},
-		active_game_id : {{ activeGame ? activeGame.getId : 'null' }}
-	});
-});
-</script>
+
+    <script type="text/javascript">
+    var app = {
+        params: {
+            rootUrl: "{{ path('homepage') }}"
+        }
+    };
+    </script>
+
+    {{ parent() }}
+
+    <script type="text/javascript">
+    $(function(){
+        app.run({
+            userId : {{ app.user.id }},
+            activeGameId : {{ activeGame ? activeGame.getId : 'null' }}
+        });
+    });
+    </script>
+
 {% endblock %}

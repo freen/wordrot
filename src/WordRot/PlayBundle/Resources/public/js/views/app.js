@@ -1,4 +1,4 @@
-// js/views/appView.js
+// js/views/app.js
 
 app.AppView = Backbone.View.extend({
 	initialize: function() {
@@ -8,12 +8,8 @@ app.AppView = Backbone.View.extend({
 		var user = new app.User({ id: app.params.userId });
 		user.fetch({
 			success: function (user) {
-
 				// Load User Summary
-				app.userSummaryView = new app.UserSummaryView({
-					el: "header .user-summary",
-					model: user
-				});
+				app.userSummaryView = new app.UserSummaryView({ model: user });
 			}
 		});
 

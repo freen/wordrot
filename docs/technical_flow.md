@@ -7,7 +7,7 @@ Data and Data Models
 --------------------
 
 ### API Data
-  
+
   - API Words and API Lists will not have parallel database records or Doctrine
     Entities
   - They'll be referred to in application Entities via their 3rd-party API IDs
@@ -42,7 +42,7 @@ API Response Caching
 
 Steps
 -----
-  
+
 ### On Load
 
   - No active Game?

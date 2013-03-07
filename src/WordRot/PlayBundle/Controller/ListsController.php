@@ -22,8 +22,12 @@ class ListsController extends Controller
 
         $lists = $wordnik->getLists();
 
-        $view = View::create($lists)
-		    ->setStatusCode(200);
+        // Omit the static property $swaggerTypes from each WordList object
+        // TODO a more graceful way of excluding this property is preferable
+        foreach($lists as &$list)
+            $list::$swaggerTypes = null;
+
+        $view = View::create($lists, 200);
 
 		return $this->get('fos_rest.view_handler')->handle($view);
     }
