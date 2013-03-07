@@ -10,23 +10,26 @@ app.NewGameView = Backbone.View.extend({
     $ul: null,
 
     initialize: function( availableLists ) {
-        this.$ul = this.$('ul.list_options');
         this.collection = availableLists;
-        console.log(this.collection);
         this.render();
     },
 
     render: function() {
-        this.$ul.html('');
+        // Frame for new game prompt
+        var template = _.template( this.template );
+        this.$el.html( template );
+        this.$ul = this.$('ul.list_options');
+
+        // Fill in the list options with lists from server
         _.each( this.collection.models, function( item ) {
             this.renderListOption( item );
         }, this );
     },
 
     renderListOption: function( item ) {
-        var listView = new app.NewGameListOptionView({
+        var newGameListOption = new app.NewGameListOptionView({
             model: item
         });
-        this.$ul.append( listView.render().el );
+        this.$ul.append( newGameListOption.render().el );
     }
 });

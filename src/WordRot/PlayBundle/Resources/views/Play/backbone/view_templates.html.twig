@@ -29,11 +29,11 @@
 {# To be incorporated into a <ul> which is appended to #new_game_prompt #}
 
 <script type="text/template" id="new_game_prompt_list_option">
-    <span class="list_name"><%= list_name %></span>
-    <span class="word_quantity"><%= word_quantity %></span>
-    <p class="list_description"><%= list_description %></p>
+    <span class="list_name"><%= name %></span>
+    <span class="word_quantity"><%= number_words_in_list %></span>
+    <p class="list_description"><%= description %></p>
     <form>
-        <input type="hidden" name="list_id" value="<%= list_id %>" />
+        <input type="hidden" name="list_id" value="<%= id %>" />
         <input type="submit" value="Use" />
     </form>
 </script>
