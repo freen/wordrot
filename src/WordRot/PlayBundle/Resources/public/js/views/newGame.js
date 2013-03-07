@@ -9,9 +9,12 @@ app.NewGameView = Backbone.View.extend({
     // The <ul> to which we will append the ListViews (<li>'s)
     $ul: null,
 
-    initialize: function( availableLists ) {
-        this.collection = availableLists;
+    initialize: function( ) {
+        this.collection = new app.ListCollection();
+        this.collection.fetch();
         this.render();
+
+        this.collection.on('reset', this.render, this);
     },
 
     render: function() {

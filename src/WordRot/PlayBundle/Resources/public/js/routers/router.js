@@ -15,14 +15,8 @@ var GameRouter = Backbone.Router.extend({
 		/** Start a new game */
 		else {
 			console.log("No game in progress.");
-			// Load user's lists
-			var availableLists = new app.ListCollection();
-			availableLists.fetch({
-				success: function( availableLists ) {
-					// Prompt to start a new game
-					app.NewGamePrompt = new app.NewGameView(availableLists);
-				}
-			});
+			// Prompt to start a new game
+			app.NewGamePrompt = new app.NewGameView();
 		}
 	}
 });
