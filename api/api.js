@@ -1,43 +1,14 @@
 var _ = require('lodash')
-  , config = require('./config.js')
   , express = require('express')
-  , Wordnik = require('wordnik')
-  , mongo = require('mongoskin')
-  , format = require('util').format;
+  , Words = require('./words')
+  , config = require('./config');
 
 var app = express()
-  , wn = new Wordnik({api_key: config.wordnik.apiKey})
-  , db = mongo.db(format("mongodb://%s/%s", config.mongodb.host, config.mongodb.database));
+  , words = new Words;
 
 app.use(express.bodyParser());
 app.use(express.cookieParser(config.http.cookieSecret));
 app.use(express.cookieSession());
-
-function fetchWord(word, fn) {
-  var wordCollection = db.collection('words');
-  wordCollection.findOne({word: word}, function(err, wordDocument) {
-      if(err || !wordDocument) {
-        console.log('No word document found for: ' + word);
-        wn.definitions(word, function(e, defs) {
-          if(0 == defs.length) {
-            fn(false);
-            return;
-          }
-          wordDocument = {
-            word: word,
-            definitions: defs
-          };
-          wordCollection.insert(wordDocument, function(err, inserted) {
-            if(err) throw err;
-          });
-          fn(wordDocument);
-        });
-      } else {
-        console.log('Word document found for: ' + word);
-        fn(wordDocument);
-      }
-  });
-}
 
 // global controller
 app.get('/*',function(req,res,next) {
@@ -47,11 +18,11 @@ app.get('/*',function(req,res,next) {
 });
 
 app.delete('/words', function(req, res){
-  var words = req.session.words,
+  var userWords = req.session.words,
       word = req.params.word,
-      pos = words.indexOf(word);
+      pos = userWords.indexOf(word);
   if(-1 !== pos) {
-    req.session.words.splice(pos,1);
+    userWords.splice(pos,1);
     res.send({success:true});
     return;
   }
@@ -59,25 +30,19 @@ app.delete('/words', function(req, res){
 });
 
 app.get('/words', function(req, res){
-  var words = {},
-      wordQty = Object.keys(req.session.words).length;
-  _(req.session.words).each(function(word, idx) {
-    fetchWord(word, function(wordDocument) {
-      words[word] = wordDocument;
-      if(idx + 1 == wordQty) {
-        res.send(words);
-      }
-    });
+  words.fetchWords(req.session.words, function(wordDocuments) {
+    res.send(wordDocuments);
   });
 });
 
 app.post('/words', function(req, res){
   var word = req.body.word;
-  fetchWord(word, function(wordDocument) {
+  words.fetchWord(word, function(wordDocument) {
     if(!wordDocument) {
       res.send({error: 'No definitions found'});
       return;
     }
+    req.session.words.push(word);
     res.send(wordDocument);
   });
 });
