@@ -1,0 +1,15 @@
+<div>
+    <h3>{{words.length }} Words</h3>
+    <form id="add-word-form"
+          ui-keyPress="{13:'addWord(newWord)'}">
+	    <input type="text"
+               ng-model="newWord">
+	    <button ng-click="addWord(newWord)">Add Word</button>
+    </form>
+    <ul>
+        <li ng-repeat="word in words | orderBy:orderProp">
+        	<a href="#/words/{{ word.word }}">{{ word.word }}</a>
+        	<span class="delete" ng-click="removeWord(word.word)">remove</span>
+        </li>
+    </ul>
+</div>

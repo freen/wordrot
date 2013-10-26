@@ -36,7 +36,7 @@ Words.prototype.fetchWord = function(word, callback) {
 
 Words.prototype.fetchWords = function(words, callback) {
 	var self = this
-	  , wordDocuments = {}
+	  , wordDocuments = []
 	  , wordsRemaining = words.length;
 	if(0 == wordsRemaining) {
 		callback(wordDocuments);
@@ -44,7 +44,7 @@ Words.prototype.fetchWords = function(words, callback) {
 	}
 	words.forEach(function(word) {
 		self.fetchWord(word, function(wordDocument) {
-			wordDocuments[word] = wordDocument;
+			wordDocuments.push(wordDocument);
 			wordsRemaining--;
 			if(0 == wordsRemaining) {
 				callback(wordDocuments);

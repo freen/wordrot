@@ -13,11 +13,12 @@ app.use(express.cookieSession());
 // global controller
 app.get('/*',function(req,res,next) {
     req.session.words = req.session.words || [];
+    // req.session.words = ['serge','sere'];
     res.set('Content-Type', 'application/json');
     next();
 });
 
-app.delete('/words', function(req, res){
+app.delete('/words/:word', function(req, res){
   var userWords = req.session.words,
       word = req.params.word,
       pos = userWords.indexOf(word);
@@ -29,20 +30,31 @@ app.delete('/words', function(req, res){
   res.send({success:false});
 });
 
-app.get('/words', function(req, res){
+app.get('/words/?', function(req, res){
   words.fetchWords(req.session.words, function(wordDocuments) {
     res.send(wordDocuments);
   });
 });
 
-app.post('/words', function(req, res){
-  var word = req.body.word;
+app.get('/words/:word', function(req, res){
+  words.fetchWord(req.params.word, function(wordDocument) {
+    res.send(wordDocument);
+  });
+});
+
+app.post('/words/?', function(req, res){
+  var userWords = req.session.words,
+      word = req.body.word,
+      pos = userWords.indexOf(word);
   words.fetchWord(word, function(wordDocument) {
     if(!wordDocument) {
+      res.status(404);
       res.send({error: 'No definitions found'});
       return;
     }
-    req.session.words.push(word);
+    if(-1 === pos) {
+      req.session.words.push(word);
+    }
     res.send(wordDocument);
   });
 });
