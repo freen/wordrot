@@ -13,7 +13,6 @@ app.use(express.cookieSession());
 // global controller
 app.get('/*',function(req,res,next) {
     req.session.words = req.session.words || [];
-    // req.session.words = ['serge','sere'];
     res.set('Content-Type', 'application/json');
     next();
 });

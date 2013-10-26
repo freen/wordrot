@@ -3,21 +3,15 @@ var wordrotControllers = angular.module('wordrotControllers', []);
 wordrotControllers.controller('WordListCtrl', ['$scope', 'Word',
 	function WordListCtrl($scope, Word) {
 		$scope.removeWord = function(word) {
-			Word.delete({word:word});
-			_.remove($scope.words, function(wordModel) {
-				return wordModel.word === word;
+			Word.delete({word:word}, function(data, responseHeaders) {
+				$scope.words = Word.query();
 			});
 		};
 		$scope.addWord = function(newWord) {
-			var exists = _.find($scope.words, function(w) {
-				return w.word === newWord;
+			var newWord = new Word({word:newWord});
+			newWord.$save(function(w, responseHeaders){
+					$scope.words = Word.query();
 			});
-			if(undefined === exists) {
-				var newWord = new Word({word:newWord});
-				newWord.$save(function(w, putResponseHeaders){
-						$scope.words.push(w);
-				});
-			}
 			$scope.newWord = '';
 		};
 		$scope.words = Word.query();
