@@ -1,7 +1,7 @@
 var EventEmitter = require('events').EventEmitter
   , Wordnik = require('wordnik')
   , db = require('./db')
-  , config = require('./config');
+  , config = require('../config');
 
 function Words() {
 	this.wn = new Wordnik({api_key: config.wordnik.apiKey});
