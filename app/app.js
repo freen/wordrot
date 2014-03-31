@@ -1,19 +1,18 @@
-require(["config"], function() {
-
-  require([
-    "jquery",
-    "underscore",
-    "backbone",
-    "layoutmanager",
-    "handlebars",
-    "views/WordAdd",
-    "views/Login"],
-    function($, _, Backbone, Layout, Handlebars, WordAddView, LoginView) {
+define([
+  "jquery",
+  "underscore",
+  "backbone",
+  "layoutmanager",
+  "handlebars",
+  "config",
+  "models/User",
+  "collections/Words"],
+  function($, _, Backbone, Layout, Handlebars, config, User, Words) {
 
     "use strict";
 
-    Layout.configure({
-      manage: true,
+    Backbone.Layout.configure({
+      manage: true, // @todo globally cfg'ing doesn't work when cache is disabled
       prefix: "templates/",
       paths: {
         views: "../app/views"
@@ -45,20 +44,28 @@ require(["config"], function() {
             done(JST[path] = Handlebars.compile(contents));
           }
         });
-    }
-    });
-
-    var main = new Backbone.Layout({
-      template: 'layout',
-      views: {
-        ".new-word": new WordAddView(),
-        ".login": new LoginView()
       }
     });
 
-    main.$el.appendTo('#wordrot-app');
-    main.render();
+    var app = {
+      // User data
+      user: new User({}),
+      words: new Words(),
+      config: config,
+      loadUser: function(async) {
+        async = async || true;
+        var that = this;
+        $.ajax(config.apiRoot + '/auth/me', {
+          async: async,
+          dataType: 'json',
+          success: function(userObject) {
+            that.user.set(userObject);
+            // callback();
+          }
+        });
+      }
+    };
 
-  });
+    return app;
 
 });

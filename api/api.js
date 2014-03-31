@@ -34,6 +34,10 @@ app.get(prefix + '/auth/logout/?', function(req,res) {
   res.send({});
 });
 
+app.get(prefix + '/auth/me/?', function(req,res) {
+  res.send(req.session.userDocument);
+});
+
 // Temp "authentication" gateway for testing user-based data model
 // @todo why does this route send a null response for new records?
 app.get(prefix + '/auth/switch-user/:user/?', function(req, res) {
@@ -90,6 +94,7 @@ app.get(prefix + '/words/:word/?', function(req, res) {
 
 app.post(prefix + '/words/?', function(req, res) {
   var userWords = req.session.userDocument.words
+    , userDocument = req.session.userDocument
     , word = req.body.word
     , wordEntry = _.find(userWords, function(entry) { return entry.word == word; });
   words.fetchWord(word, function(wordDocument) {

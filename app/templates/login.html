@@ -1,4 +1,9 @@
+{{#unless _id}}
 <form class="login">
     <input type="text" name="username" />
     <button class="login">Login</button>
 </form>
+{{else}}
+Logged in as {{name}}
+<a href="#" class="logout">Logout</a>
+{{/unless}}
