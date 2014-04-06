@@ -12,7 +12,7 @@ define([
     "use strict";
 
     Backbone.Layout.configure({
-      manage: true, // @todo globally cfg'ing doesn't work when cache is disabled
+      manage: true,
       prefix: "templates/",
       paths: {
         views: "../app/views"
@@ -60,11 +60,14 @@ define([
           dataType: 'json',
           success: function(userObject) {
             that.user.set(userObject);
-            // callback();
           }
         });
       }
     };
+
+    app.user.on('change', function() {
+      app.words.fetch({reset:true});
+    });
 
     return app;
 

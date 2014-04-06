@@ -12,15 +12,16 @@ define([
   	template: 'wordList',
 
   	initialize: function () {
-      this.words = window.wordrot.words;
-  		var view = this;
-  		this.words.on('change', function(){
-  			view.render();
+  		var that = this;
+  		this.collection.on('sync', function(){
+  			that.render();
   		});
-      window.wordrot.user.on('change', function() {
-        view.words.fetch();
-      });
   	},
+
+    serialize: function () {
+      var context = {words: _.clone(this.collection.models)};
+      return context;
+    }
 
   });
 

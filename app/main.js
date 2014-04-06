@@ -29,7 +29,7 @@ require(["require.config"], function(config, Backbone, Layout) {
         views: {
           ".new-word": new WordAddView(),
           ".login": new LoginView(),
-          ".list-word": new WordListView()
+          ".list-word": new WordListView({collection:app.words})
         }
       });
 

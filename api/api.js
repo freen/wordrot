@@ -61,8 +61,7 @@ app.get(prefix + '/auth/switch-user/:user/?', function(req, res) {
 // Disallow all words routes unless authenticated
 app.all(prefix + '/words*?', function(req,res,next) {
   if(undefined === req.session.userDocument) {
-    res.status(403);
-    return res.send({error: 'Not logged in'});
+    return res.send([]);
   }
   next();
 });
@@ -81,9 +80,7 @@ app.delete(prefix + '/words/:word/?', function(req, res) {
 
 app.get(prefix + '/words/?', function(req, res) {
   var userWords = req.session.userDocument.words;
-  words.fetchWords(userWords, function(wordDocuments) {
-    res.send(wordDocuments);
-  });
+  res.send(userWords);
 });
 
 app.get(prefix + '/words/:word/?', function(req, res) {
@@ -112,7 +109,7 @@ app.post(prefix + '/words/?', function(req, res) {
         modified: new Date
       };
       userWords.push(wordEntry);
-      users.updateById(userDocument._id, {$push: {words: wordEntry}});
+      users.userCollection.updateById(userDocument._id, {$push: {words: wordEntry}});
     }
     res.send(wordEntry);
   });

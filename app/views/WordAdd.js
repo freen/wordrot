@@ -26,9 +26,8 @@ define([
         if(existing.length > 0) {
           return;
         }
-        var newWord = new Word({word:word});
-        newWord.save();
-        this.words.add(newWord);
+        this.words.create({word:word});
+        $word.val('');
       }
     }
   });

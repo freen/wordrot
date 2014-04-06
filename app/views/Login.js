@@ -19,7 +19,6 @@ define([
       this.model = window.wordrot.user;
       var that = this;
       this.model.on('change', function(){
-        console.log('user changed', arguments);
         that.render();
       });
     },
@@ -27,7 +26,7 @@ define([
     doLogout: function(e) {
       e.preventDefault();
       var that = this;
-      $.ajax(window.wordrot.apiRoot + '/auth/logout', {
+      $.ajax(window.wordrot.config.apiRoot + '/auth/logout', {
         success: function() {
           window.wordrot.user.clear();
         }
@@ -43,8 +42,7 @@ define([
         return;
       }
       $.ajax({
-        // @todo put API root in config
-        url: '/wordrot-api/auth/switch-user/' + username,
+        url: window.wordrot.config.apiRoot + '/auth/switch-user/' + username,
         success: function() {
           window.wordrot.loadUser();
         }
