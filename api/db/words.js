@@ -4,13 +4,13 @@ var EventEmitter = require('events').EventEmitter
   , config = require('../config');
 
 function Words() {
-	this.wn = new Wordnik({api_key: config.wordnik.apiKey});
-	this.wordCollection = db.collection('words');
+  this.wn = new Wordnik({api_key: config.wordnik.apiKey});
+  this.wordCollection = db.collection('words');
 };
 
 Words.prototype.fetchWord = function(word, callback) {
   console.log('Words.fetchWord', arguments);
-	var self = this;
+  var self = this;
   this.wordCollection.findOne({word: word}, function(err, wordDocument) {
       if(err || !wordDocument) {
         console.log('No word document found for: ' + word);
@@ -38,22 +38,22 @@ Words.prototype.fetchWord = function(word, callback) {
 
 Words.prototype.fetchWords = function(words, callback) {
   console.log('Words.fetchWords', arguments);
-	var self = this
-	  , wordDocuments = []
-	  , wordsRemaining = words.length;
-	if(0 == wordsRemaining) {
-		callback(wordDocuments);
-		return;
-	}
-	words.forEach(function(word) {
-		self.fetchWord(word, function(wordDocument) {
-			wordDocuments.push(wordDocument);
-			wordsRemaining--;
-			if(0 == wordsRemaining) {
-				callback(wordDocuments);
-			}
-		});
-	});
+  var self = this
+    , wordDocuments = []
+    , wordsRemaining = words.length;
+  if(0 == wordsRemaining) {
+    callback(wordDocuments);
+    return;
+  }
+  words.forEach(function(word) {
+    self.fetchWord(word, function(wordDocument) {
+      wordDocuments.push(wordDocument);
+      wordsRemaining--;
+      if(0 == wordsRemaining) {
+        callback(wordDocuments);
+      }
+    });
+  });
 };
 
 Words.prototype.__proto__ = EventEmitter.prototype;

@@ -3,7 +3,7 @@ var EventEmitter = require('events').EventEmitter
   , config = require('../config');
 
 function Users() {
-	this.userCollection = db.collection('users');
+  this.userCollection = db.collection('users');
 };
 
 Users.prototype.addUser = function(username, callback) {

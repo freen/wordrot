@@ -1,18 +1,18 @@
 define([
-	"jquery",
-	"underscore",
-	"backbone",
-	"layoutmanager",
-	"models/Word"],
-	function($, _, Backbone, Layout, Word) {
+  "jquery",
+  "underscore",
+  "backbone",
+  "layoutmanager",
+  "models/Word"],
+  function($, _, Backbone, Layout, Word) {
 
   "use strict";
 
   var WordAddView = Backbone.Layout.extend({
-  	template: 'wordAdd',
-  	initialize: function () {
-  		this.words = window.wordrot.words;
-  	},
+    template: 'wordAdd',
+    initialize: function () {
+      this.words = window.wordrot.words;
+    },
     events: {
       'click button.add': function (e) {
         e.preventDefault();

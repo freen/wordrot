@@ -1,14 +1,14 @@
 define([
-	"jquery",
-	"underscore",
+  "jquery",
+  "underscore",
   "backbone",
-	"layoutmanager"],
-	function($, _, Backbone, Layout) {
+  "layoutmanager"],
+  function($, _, Backbone, Layout) {
 
   "use strict";
 
   var Login = Backbone.Layout.extend({
-  	template: 'login',
+    template: 'login',
 
     events: {
       "click button.login": "doLogin",
