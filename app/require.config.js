@@ -8,6 +8,7 @@ require.config({
     "layoutmanager":  "lib/backbone.layoutmanager",
 
     // Application
+    "app":          "app",
     "config":       "app.config",
     "views":        "views",
     "collections":  "collections"
