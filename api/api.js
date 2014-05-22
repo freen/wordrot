@@ -1,4 +1,5 @@
 var _ = require('lodash')
+  , async = require('async')
   , express = require('express')
   , MongoStore = require('connect-mongo')(express)
   , Words = require('./db/words')
@@ -86,8 +87,22 @@ app.delete(prefix + '/words/:word/?', function(req, res) {
 });
 
 app.get(prefix + '/words/?', function(req, res) {
-  var userWords = req.session.userDocument.words;
-  res.send(userWords);
+  // @note low hanging fruit for optimization, should be cached in session
+  var userWords = _.clone(req.session.userDocument.words);
+  async.each(
+    userWords,
+    // For each user word, populate the word's definition
+    function(word, callback) {
+      words.fetchWord(word.word, function(wordDocument) { 
+        word.definition = wordDocument;
+        callback();
+      });
+    },
+    // Respond with user words, now with populated definitions
+    function() {
+      res.send(userWords);
+    }
+  );
 });
 
 app.get(prefix + '/words/:word/?', function(req, res) {
