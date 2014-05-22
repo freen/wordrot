@@ -4,10 +4,11 @@
   "description": "The API server for the wordrot game",
   "author": "freen <dbickett@gmail.com>",
   "dependencies": {
+    "connect-mongo": "^0.4.1",
     "express": "3.4.x",
-    "wordnik": "*",
+    "lodash": "2.2.x",
     "mongoskin": "0.6.x",
-    "lodash": "2.2.x"
+    "wordnik": "*"
   },
   "engines": {
     "node": ">=0.10"

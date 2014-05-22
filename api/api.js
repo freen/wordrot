@@ -1,5 +1,6 @@
 var _ = require('lodash')
   , express = require('express')
+  , MongoStore = require('connect-mongo')(express)
   , Words = require('./db/words')
   , Users = require('./db/users')
   , config = require('./config');
@@ -10,8 +11,14 @@ var app = express()
   , prefix = config.http.apiUrlPrefix;
 
 app.use(express.bodyParser());
-app.use(express.cookieParser(config.http.cookieSecret));
-app.use(express.cookieSession());
+app.use(express.cookieParser());
+app.use(express.session({
+    secret:config.http.cookieSecret,
+    store: new MongoStore({
+      db: config.mongodb.database,
+      host: config.mongodb.host
+    })
+}));
 
 // global controller
 app.get(prefix + '/*',function(req,res,next) {
