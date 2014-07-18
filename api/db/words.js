@@ -14,7 +14,6 @@ Words.prototype.fetchWord = function(word, callback) {
   this.wordCollection.findOne({word: word}, function(err, wordDocument) {
       if(err || !wordDocument) {
         console.log('No word document found for: ' + word);
-        console.log(word);
         self.wn.definitions(word, function(e, defs) {
           if(0 == defs.length) {
             callback(false);
@@ -39,21 +38,19 @@ Words.prototype.fetchWord = function(word, callback) {
 Words.prototype.fetchWords = function(words, callback) {
   console.log('Words.fetchWords', arguments);
   var self = this
-    , wordDocuments = []
-    , wordsRemaining = words.length;
-  if(0 == wordsRemaining) {
-    callback(wordDocuments);
-    return;
-  }
-  words.forEach(function(word) {
-    self.fetchWord(word, function(wordDocument) {
-      wordDocuments.push(wordDocument);
-      wordsRemaining--;
-      if(0 == wordsRemaining) {
-        callback(wordDocuments);
-      }
-    });
-  });
+    , wordDocuments = [];
+  async.each(
+    words,
+    function(word, callback) {
+      self.fetchWord(word, function(wordDocument) {
+        wordDocuments.push(wordDocument);
+      });
+    },
+    function(err) {
+      if(err) throw err;
+      callback(wordDocuments);
+    }
+  );
 };
 
 Words.prototype.__proto__ = EventEmitter.prototype;

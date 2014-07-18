@@ -31,6 +31,22 @@ Users.prototype.fetchUserByName = function(username, callback) {
   });
 };
 
+Users.prototype.fetchPoorestPerformingWordByUser = function(username, callback) {
+  this.fetchUserByName(username, function(userDocument) {
+    if(!userDocument) {
+      return callback(undefined);
+    }
+    // Sort words by performance
+    userDocument.words.sort(function(a, b) {
+      var scoreA = a.hits - a.misses
+        , scoreB = b.hits - b.misses;
+      return scoreA - scoreB;
+    });
+    console.log('User words sorted by score (hits minus misses):', userDocument.words);
+    callback(userDocument.words[0]);
+  });
+};
+
 Users.prototype.__proto__ = EventEmitter.prototype;
 
 module.exports = Users;

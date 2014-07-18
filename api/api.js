@@ -86,6 +86,45 @@ app.delete(prefix + '/words/:word/?', function(req, res) {
   res.send({success:false});
 });
 
+app.get(prefix + '/words/on-deck/?', function(req, res) {
+  var userDocument = req.session.userDocument
+    , poorestUserWord
+    , poorestWordDocument;
+  async.waterfall([
+    // Function poorest user word
+    function(callback) {
+      users.fetchPoorestPerformingWordByUser(userDocument.name, function(userWord) {
+        if(!userWord) {
+          return callback(new Error('Undefined result for poorest performing user word.'));
+        }
+        console.log('Poorest user word:', userWord);
+        callback(null, userWord);
+      });
+    },
+    // Fetch word's document
+    function(userWord, callback) {
+      words.fetchWord(userWord.word, function(wordDocument) {
+        if(!wordDocument) {
+          return callback(new Error('Undefined result for wordDocument.'));
+        }
+        var response = {
+          success: true,
+          userWord: userWord,
+          word: wordDocument
+        };
+        console.log('Poorest word document:', userWord);
+        callback(null, response);
+      });
+    }
+  ], function (err, result) {
+    if(err) {
+      res.send({success:false,error:err});
+      return;
+    }
+    res.send(result);
+  });
+});
+
 app.get(prefix + '/words/?', function(req, res) {
   // @note low hanging fruit for optimization, should be cached in session
   var userWords = _.clone(req.session.userDocument.words);
