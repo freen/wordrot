@@ -2,8 +2,9 @@ define([
   "jquery",
   "underscore",
   "backbone",
-  "layoutmanager"],
-  function($, _, Backbone, Layout) {
+  "layoutmanager",
+  "app"],
+  function($, _, Backbone, Layout, app) {
 
   "use strict";
 
@@ -28,7 +29,7 @@ define([
       var that = this;
       $.ajax(window.wordrot.config.apiRoot + '/auth/logout', {
         success: function() {
-          window.wordrot.user.clear();
+          app.user.clear();
         }
       })
     },
@@ -44,7 +45,7 @@ define([
       $.ajax({
         url: window.wordrot.config.apiRoot + '/auth/switch-user/' + username,
         success: function() {
-          window.wordrot.loadUser();
+          app.user.fetch();
         }
       });
     }

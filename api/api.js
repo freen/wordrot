@@ -29,7 +29,6 @@ function refuseIfNotAuthenticated(req, res, errorResponse) {
   if(req.session.userDocument) {
     return true;
   }
-  res.code(401);
   res.send(errorResponse);
   return false;
 }
