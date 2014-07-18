@@ -53,7 +53,10 @@ define([
 
     // Model accessor to the current word in play
     var WordOnDeck = Backbone.Model.extend({
-      url: config.apiRoot + '/play/word-on-deck'
+      url: config.apiRoot + '/play/word-on-deck',
+      toJSON: function(options) {
+        return _.clone(this.attributes);
+      }
     });
 
     var app = {
