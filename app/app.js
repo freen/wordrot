@@ -5,9 +5,8 @@ define([
   "layoutmanager",
   "handlebars",
   "config",
-  "models/User",
   "collections/Words"],
-  function($, _, Backbone, Layout, Handlebars, config, User, Words) {
+  function($, _, Backbone, Layout, Handlebars, config, Words) {
 
     "use strict";
 
@@ -47,26 +46,26 @@ define([
       }
     });
 
+    // Model accessor to authenticated user
+    var AuthenticatedUser = Backbone.Model.extend({
+      url: config.apiRoot + '/auth/me'
+    });
+
+    // Model accessor to the current word in play
+    var WordOnDeck = Backbone.Model.extend({
+      url: config.apiRoot + '/play/word-on-deck'
+    });
+
     var app = {
-      // User data
-      user: new User({}),
-      words: new Words(),
-      config: config,
-      loadUser: function(async) {
-        async = async || true;
-        var that = this;
-        $.ajax(config.apiRoot + '/auth/me', {
-          async: async,
-          dataType: 'json',
-          success: function(userObject) {
-            that.user.set(userObject);
-          }
-        });
-      }
+      user: new AuthenticatedUser,
+      words: new Words,
+      wordOnDeck: new WordOnDeck,
+      config: config
     };
 
     app.user.on('change', function() {
       app.words.fetch({reset:true});
+      app.wordOnDeck.fetch({reset:true});
     });
 
     return app;

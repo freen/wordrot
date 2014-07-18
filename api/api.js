@@ -21,6 +21,19 @@ app.use(express.session({
     })
 }));
 
+function refuseIfNotAuthenticated(req, res, errorResponse) {
+  errorResponse = errorResponse || {
+    success: false,
+    error: "You must be authenticated to use this endpoint."
+  };
+  if(req.session.userDocument) {
+    return true;
+  }
+  res.code(401);
+  res.send(errorResponse);
+  return false;
+}
+
 // global controller
 app.get(prefix + '/*',function(req,res,next) {
   req.session.userDocument = req.session.userDocument || undefined;
@@ -43,6 +56,7 @@ app.get(prefix + '/auth/logout/?', function(req,res) {
 });
 
 app.get(prefix + '/auth/me/?', function(req,res) {
+  if(!refuseIfNotAuthenticated(req, res)) return;
   res.send(req.session.userDocument);
 });
 
@@ -68,9 +82,7 @@ app.get(prefix + '/auth/switch-user/:user/?', function(req, res) {
 
 // Disallow all words routes unless authenticated
 app.all(prefix + '/words*?', function(req,res,next) {
-  if(undefined === req.session.userDocument) {
-    return res.send([]);
-  }
+  if(!refuseIfNotAuthenticated(req, res, [])) return;
   next();
 });
 
@@ -86,10 +98,13 @@ app.delete(prefix + '/words/:word/?', function(req, res) {
   res.send({success:false});
 });
 
-app.get(prefix + '/words/on-deck/?', function(req, res) {
+app.get(prefix + '/play/word-on-deck/?', function(req, res){
+  if(!refuseIfNotAuthenticated(req, res)) return;
+  
   var userDocument = req.session.userDocument
     , poorestUserWord
     , poorestWordDocument;
+
   async.waterfall([
     // Function poorest user word
     function(callback) {

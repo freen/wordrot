@@ -22,8 +22,7 @@ require(["require.config"], function(config) {
 
       window.wordrot = app;
 
-      // load user w/ blocking
-      app.loadUser(false);
+      app.user.fetch();
 
       var main = new Backbone.Layout({
         manage: true,
