@@ -23,18 +23,34 @@ define([
     },
 
     serialize: function () {
+
       if(!this.model.attributes.word) {
         return;
       }
+
       var wordOnDeck = this.model.toJSON()
         , wordText = wordOnDeck.word.word
         , definitions = wordOnDeck.word.definitions
         , randomDefinition = _.sample(definitions);
-      randomDefinition.sequence = parseInt(randomDefinition.sequence) + 1;
+      randomDefinition.sequenceInt = parseInt(randomDefinition.sequence) + 1;
+
       // Remove occurrences of the word from its definition
       var re = new RegExp(wordText, "gi");
       randomDefinition.text = randomDefinition.text.replace(re, "_____");
-      return {definition: randomDefinition};
+      
+      var context = {
+        definitions: []
+      };
+      definitions.forEach(function(definition) {
+        if(definition.sequence != randomDefinition.sequence) {
+          context.definitions.push({});
+          return;
+        }
+        context.definitions.push(randomDefinition);
+      });
+
+      return context;
+
     }
 
   });
@@ -42,5 +58,3 @@ define([
   return Play;
 
 });
-
-

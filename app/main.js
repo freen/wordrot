@@ -48,11 +48,17 @@ require(["require.config"], function(config) {
 
         home: function() {
           app.layout.views['.list-word'].$el.show();
+          app.layout.views['.new-word'].$el.show();
+          app.layout.views['.login'].$el.show();
+
           app.layout.views['.play'].$el.hide();
         },
 
         play: function() {
           app.layout.views['.list-word'].$el.hide();
+          app.layout.views['.new-word'].$el.hide();
+          app.layout.views['.login'].$el.hide();
+
           app.layout.views['.play'].$el.show();
         }
       });

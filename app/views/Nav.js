@@ -2,8 +2,9 @@ define([
   "jquery",
   "underscore",
   "backbone",
-  "layoutmanager"],
-  function($, _, Backbone, Layout) {
+  "layoutmanager",
+  "app"],
+  function($, _, Backbone, Layout, app) {
 
   "use strict";
 
@@ -12,7 +13,20 @@ define([
 
     events: { },
 
-    initialize: function () { }
+    initialize: function () {
+      var that = this;
+      app.user.on('change', function () {
+        that.render();
+      });
+    },
+
+    serialize: function () {
+      var context = {};
+      if(app.user.get('_id')) {
+        context.user = app.user.toJSON();
+      }
+      return context;
+    }
 
   });
 

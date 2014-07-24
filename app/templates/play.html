@@ -1,1 +1,10 @@
-<h3>{{definition.sequence}}. {{definition.text}}</h3>
+<ul>
+	{{#each definitions}}
+	{{#if this.text}}
+	<li>{{this.sequenceInt}}. {{this.text}}</li>
+	{{else}}
+	<li class="redacted"></li>
+	{{/if}}
+	{{/each}}
+</ul>
+<input name="answer" type="text" />

@@ -5,8 +5,9 @@ define([
   "layoutmanager",
   "handlebars",
   "config",
+  "models/Base",
   "collections/Words"],
-  function($, _, Backbone, Layout, Handlebars, config, Words) {
+  function($, _, Backbone, Layout, Handlebars, config, BaseModel, Words) {
 
     "use strict";
 
@@ -47,16 +48,13 @@ define([
     });
 
     // Model accessor to authenticated user
-    var AuthenticatedUser = Backbone.Model.extend({
+    var AuthenticatedUser = BaseModel.extend({
       url: config.apiRoot + '/auth/me'
     });
 
     // Model accessor to the current word in play
-    var WordOnDeck = Backbone.Model.extend({
-      url: config.apiRoot + '/play/word-on-deck',
-      toJSON: function(options) {
-        return _.clone(this.attributes);
-      }
+    var WordOnDeck = BaseModel.extend({
+      url: config.apiRoot + '/play/word-on-deck'
     });
 
     var app = {
