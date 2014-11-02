@@ -12,7 +12,9 @@ define([
 
     template: 'play',
 
-    events: { },
+    events: {
+      'keypress input[name=answer]': 'submitAnswer'
+    },
 
     initialize: function () {
       this.model = app.wordOnDeck;
@@ -20,6 +22,11 @@ define([
       this.model.on('change', function(){
         that.render();
       });
+    },
+
+    submitAnswer: function(e) {
+      if(e.keyCode != 13) return;
+      
     },
 
     serialize: function () {

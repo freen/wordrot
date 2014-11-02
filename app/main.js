@@ -80,13 +80,13 @@ require(["require.config"], function(config) {
 
       // Only need this for pushState enabled browsers
       if (Backbone.history && Backbone.history._hasPushState) {
-        
+
         $(document).keydown(function(event) {
           if (event.ctrlKey || event.keyCode === 91) {
             openLinkInTab = true;
           }
         });
-        
+
         $(document).keyup(function(event) {
           openLinkInTab = false;
         });

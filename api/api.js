@@ -97,36 +97,42 @@ app.delete(prefix + '/words/:word/?', function(req, res) {
   res.send({success:false});
 });
 
-app.get(prefix + '/play/word-on-deck/?', function(req, res){
+app.put(prefix + '/play/skip/?', function(req, res) {
+
+});
+
+app.put(prefix + '/play/answer/?', function(req, res) {
+  // @todo decouple and cacheify word-on-deck getter for use here also
+});
+
+app.get(prefix + '/play/word-on-deck/?', function(req, res) {
   if(!refuseIfNotAuthenticated(req, res)) return;
   
-  var userDocument = req.session.userDocument
-    , poorestUserWord
-    , poorestWordDocument;
+  var userDocument = req.session.userDocument;
 
   async.waterfall([
-    // Function poorest user word
+    // Fetch word on deck
     function(callback) {
-      users.fetchPoorestPerformingWordByUser(userDocument.name, function(userWord) {
-        if(!userWord) {
-          return callback(new Error('Undefined result for poorest performing user word.'));
+      users.getWordOnDeck(userDocument.name, false, function(wordOnDeck) {
+        if(!wordOnDeck) {
+          return callback(new Error('Undefined word on deck.'));
         }
-        console.log('Poorest user word:', userWord);
-        callback(null, userWord);
+        callback(null, wordOnDeck);
       });
     },
     // Fetch word's document
-    function(userWord, callback) {
-      words.fetchWord(userWord.word, function(wordDocument) {
-        if(!wordDocument) {
+    function(userWordName, callback) {
+      words.fetchWord(userWordName, function(wordDoc) {
+        if(!wordDoc) {
           return callback(new Error('Undefined result for wordDocument.'));
         }
+        var userWord = users.getWordStatsFromUserDocument(userDocument, wordDoc.word);
+        // todo data duplication
         var response = {
           success: true,
           userWord: userWord,
-          word: wordDocument
+          word: wordDoc
         };
-        console.log('Poorest word document:', userWord);
         callback(null, response);
       });
     }
@@ -140,8 +146,8 @@ app.get(prefix + '/play/word-on-deck/?', function(req, res){
 });
 
 app.get(prefix + '/words/?', function(req, res) {
-  // @note low hanging fruit for optimization, should be cached in session
   var userWords = _.clone(req.session.userDocument.words);
+  // todo optimization/caching opportunity
   async.each(
     userWords,
     // For each user word, populate the word's definition
