@@ -1,19 +1,45 @@
-var _ = require('lodash')
-  , async = require('async')
-  , express = require('express')
-  , MongoStore = require('connect-mongo')(express)
-  , Words = require('./db/words')
-  , Users = require('./db/users')
-  , config = require('./config');
+var _ = require('lodash'),
+  async = require('async'),
 
-var app = express()
-  , words = new Words
-  , users = new Users
-  , prefix = config.http.apiUrlPrefix;
+  // express
+  express = require('express'),
+  session = require('express-session'),
+  MongoStore = require('connect-mongo')(session),
+  bodyParser = require('body-parser'),
+  cookieParser = require('body-parser'),
+  multer = require('multer'),
+  errorHandler = require('errorhandler'),
+
+  // wordrot
+  // routes = require('./routes')
+  Words = require('./db/words'),
+  Users = require('./db/users'),
+  config = require('./config');
+
+var app = express();
+
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: config.http.cookieSecret,
+  store: new MongoStore({
+    db: config.mongodb.database,
+    host: config.mongodb.host
+  })
+}));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(multer());
+
+// development only
+if ('development' == app.get('env')) {
+  app.use(errorHandler());
+}
 
 app.set('config', config);
-app.set('users', users);
-app.set('words', words);
+app.set('users', new Users);
+app.set('words', new Words);
 
 app.set('abortIfNotAuthenticated', function(req, res, errorResponse) {
   errorResponse = errorResponse || {
@@ -27,17 +53,8 @@ app.set('abortIfNotAuthenticated', function(req, res, errorResponse) {
   return true;
 });
 
-app.use(express.bodyParser());
-app.use(express.cookieParser());
-app.use(express.session({
-    secret:config.http.cookieSecret,
-    store: new MongoStore({
-      db: config.mongodb.database,
-      host: config.mongodb.host
-    })
-}));
+var prefix = config.http.apiUrlPrefix;
 
-// Global route behavior
 app.get(prefix + '/*', function(req,res,next) {
   req.session.userDocument = req.session.userDocument || undefined;
   res.set('Content-Type', 'application/json');
@@ -49,4 +66,6 @@ require('./routes/debug')(app, prefix);
 require('./routes/play')(app, prefix);
 require('./routes/words')(app, prefix);
 
-app.listen(3000);
+app.listen(config.port, function(){
+  console.log('Wordrot server listening on port ' + config.port);
+});
