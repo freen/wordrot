@@ -23,10 +23,8 @@ Users.prototype.addUser = function(username, callback) {
 Users.prototype.fetchUserByName = function(username, callback) {
   this.userCollection.findOne({name: username}, function(err, userDocument) {
       if(err || !userDocument) {
-        // console.log('No user document found for: ' + username);
         return callback(undefined);
       }
-      // console.log('User document found for: ' + username);
       return callback(userDocument);
   });
 };

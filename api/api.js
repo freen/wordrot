@@ -6,18 +6,20 @@ var _ = require('lodash'),
   session = require('express-session'),
   MongoStore = require('connect-mongo')(session),
   bodyParser = require('body-parser'),
-  cookieParser = require('body-parser'),
   multer = require('multer'),
   errorHandler = require('errorhandler'),
 
   // wordrot
-  // routes = require('./routes')
   Words = require('./db/words'),
   Users = require('./db/users'),
   config = require('./config');
 
 var app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -27,9 +29,6 @@ app.use(session({
     host: config.mongodb.host
   })
 }));
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(multer());
 
 // development only

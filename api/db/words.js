@@ -9,11 +9,9 @@ function Words() {
 };
 
 Words.prototype.fetchWord = function(word, callback) {
-  console.log('Words.fetchWord', arguments);
   var self = this;
   this.wordCollection.findOne({word: word}, function(err, wordDocument) {
       if(err || !wordDocument) {
-        console.log('No word document found for: ' + word);
         self.wn.definitions(word, function(e, defs) {
           if(0 == defs.length) {
             callback(false);
@@ -29,14 +27,12 @@ Words.prototype.fetchWord = function(word, callback) {
           callback(wordDocument);
         });
       } else {
-        console.log('Word document found for: ' + word);
         callback(wordDocument);
       }
   });
 };
 
 Words.prototype.fetchWords = function(words, callback) {
-  console.log('Words.fetchWords', arguments);
   var self = this
     , wordDocuments = [];
   async.each(
