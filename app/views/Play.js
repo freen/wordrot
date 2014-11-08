@@ -26,7 +26,7 @@ define([
 
     submitAnswer: function(e) {
       if(e.keyCode != 13) return;
-      
+
     },
 
     serialize: function () {
@@ -44,7 +44,7 @@ define([
       // Remove occurrences of the word from its definition
       var re = new RegExp(wordText, "gi");
       randomDefinition.text = randomDefinition.text.replace(re, "_____");
-      
+
       var context = {
         definitions: []
       };
