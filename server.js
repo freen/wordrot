@@ -10,6 +10,7 @@ var express = require('express'),
   api = require('./api/api.js');
 
 var app = express();
+app.set('port', process.env.PORT || config.port);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,10 +29,15 @@ if ('development' == app.get('env')) {
   app.use(errorHandler());
 }
 
-app.use(express.static(__dirname + '/app'));
+var staticMiddleware = express.static(__dirname + '/app');
+app.use(staticMiddleware);
 app.use('/api', api);
 
-app.set('port', process.env.PORT || config.port);
+// Pass unknown routes to backbone
+app.get('/*', function(req, res, next) {
+  req.url = '/index.html';
+  staticMiddleware(req, res, next)
+});
 
 app.listen(app.get('port'), function(){
   console.log('Wordrot server listening on port ' + app.get('port'));
