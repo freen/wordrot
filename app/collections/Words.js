@@ -1,14 +1,15 @@
 define([
   "underscore",
   "backbone",
-  "models/Word"],
-  function(_, Backbone, Word) {
+  "models/Word",
+  "config"],
+  function(_, Backbone, Word, config) {
 
   "use strict";
 
   var Words = Backbone.Collection.extend({
     model: Word,
-    url: '/wordrot-api/words'
+    url: config.apiRoot + '/words'
   });
 
   return Words;

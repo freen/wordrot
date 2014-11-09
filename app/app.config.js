@@ -1,3 +1,3 @@
 var config = {
-  apiRoot: '/wordrot-api'
+  apiRoot: '/api'
 };

@@ -1,11 +1,11 @@
 {
-  "name": "wordrot-api-server",
+  "name": "wordrot",
   "version": "0.0.1",
   "private": true,
-  "description": "The API server for the wordrot game",
+  "description": "Reverse-dictionary vocabulary quiz",
   "author": "freen <dbickett@gmail.com>",
   "scripts": {
-    "start": "node api.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "async": "^0.9.0",

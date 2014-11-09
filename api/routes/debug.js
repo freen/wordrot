@@ -1,11 +1,11 @@
-module.exports = function(app, prefix) {
+module.exports = function(app) {
 
-	app.get(prefix + '/debug/session/purge/?', function(req,res) {
+	app.get('/debug/session/purge/?', function(req,res) {
 	  req.session = {};
 	  res.send(req.session);
 	});
 
-	app.get(prefix + '/debug/session/?', function(req,res) {
+	app.get('/debug/session/?', function(req,res) {
 	  res.send(req.session);
 	});
 

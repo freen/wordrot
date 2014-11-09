@@ -1,4 +1,4 @@
-module.exports = function(app, prefix) {
+module.exports = function(app) {
 
 	var _ = require('lodash')
 	  , async = require('async')
@@ -6,12 +6,12 @@ module.exports = function(app, prefix) {
 	  , words = app.get('words')
 	  , abortIfNotAuthenticated = app.get('abortIfNotAuthenticated');
 
-	app.all(prefix + '/words*?', function(req,res,next) {
+	app.all('/words*?', function(req,res,next) {
 	  if(!abortIfNotAuthenticated(req, res)) return;
 	  next();
 	});
 
-	app.delete(prefix + '/words/:word/?', function(req, res) {
+	app.delete('/words/:word/?', function(req, res) {
 	  var userWords = req.session.userDocument.words,
 	      word = req.params.word,
 	      pos = userWords.indexOf(word);
@@ -23,7 +23,7 @@ module.exports = function(app, prefix) {
 	  res.send({success:false});
 	});
 
-	app.get(prefix + '/words/?', function(req, res) {
+	app.get('/words/?', function(req, res) {
 	  var userWords = _.clone(req.session.userDocument.words);
 	  // todo optimization/caching opportunity
 	  async.each(
@@ -42,13 +42,13 @@ module.exports = function(app, prefix) {
 	  );
 	});
 
-	app.get(prefix + '/words/:word/?', function(req, res) {
+	app.get('/words/:word/?', function(req, res) {
 	  words.fetchWord(req.params.word, function(wordDocument) {
 	    res.send(wordDocument);
 	  });
 	});
 
-	app.post(prefix + '/words/?', function(req, res) {
+	app.post('/words/?', function(req, res) {
 	  var userWords = req.session.userDocument.words
 	    , userDocument = req.session.userDocument
 	    , word = req.body.word

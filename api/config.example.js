@@ -3,7 +3,6 @@ var config = {};
 config.port = 80;
 
 config.http = {};
-config.http.apiUrlPrefix = '/wordrot-api';
 config.http.cookieSecret = 'secret';
 
 config.wordnik = {};

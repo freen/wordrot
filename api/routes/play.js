@@ -1,4 +1,4 @@
-module.exports = function(app, prefix) {
+module.exports = function(app) {
 
 	var _ = require('lodash')
 	  , async = require('async')
@@ -6,13 +6,13 @@ module.exports = function(app, prefix) {
 	  , words = app.get('words')
 	  , abortIfNotAuthenticated = app.get('abortIfNotAuthenticated');
 
-	app.all(prefix + '/play*?', function(req,res,next) {
+	app.all('/play*?', function(req,res,next) {
 	  if(!abortIfNotAuthenticated(req, res)) return;
 	  next();
 	});
 
 	// Play routes need to know the "word on deck"
-	app.all(prefix + '/play*?', function(req,res,next) {
+	app.all('/play*?', function(req,res,next) {
 	  if(!abortIfNotAuthenticated(req, res)) return;
 	  var userDocument = req.session.userDocument;
 	  async.waterfall([
@@ -48,15 +48,15 @@ module.exports = function(app, prefix) {
 	  });
 	});
 
-	app.put(prefix + '/play/answer/?', function(req, res, wordOnDeck) {
+	app.put('/play/answer/?', function(req, res, wordOnDeck) {
 	  var userDocument = req.session.userDocument;
 	});
 
-	app.put(prefix + '/play/skip/?', function(req, res) {
+	app.put('/play/skip/?', function(req, res) {
 
 	});
 
-	app.get(prefix + '/play/word-on-deck/?', function(req, res, wordOnDeck) {
+	app.get('/play/word-on-deck/?', function(req, res, wordOnDeck) {
 	  var response = _.assign({success: true}, req.session.wordOnDeck);
 	  res.send(response);
 	});
