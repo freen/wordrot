@@ -1,4 +1,5 @@
-var express = require('express'),
+var mongoose = require('./api/db2/db.js'),
+  express = require('express'),
   session = require('express-session'),
   MongoStore = require('connect-mongo')(session),
   bodyParser = require('body-parser'),
@@ -18,10 +19,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: config.http.cookieSecret,
-  store: new MongoStore({
-    db: config.mongodb.database,
-    host: config.mongodb.host
-  })
+  store: new MongoStore({ mongooseConnection: db })
 }));
 app.use(multer());
 

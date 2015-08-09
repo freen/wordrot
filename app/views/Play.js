@@ -13,7 +13,8 @@ define([
     template: 'play',
 
     events: {
-      'keypress input[name=answer]': 'submitAnswer'
+      'keypress input[name=answer]': 'submitAnswer',
+      'click button[name=skip]': 'skipWord'
     },
 
     initialize: function () {
@@ -27,6 +28,12 @@ define([
     submitAnswer: function(e) {
       if(e.keyCode != 13) return;
 
+    },
+
+    skipWord: function(e) {
+      app.wordOnDeck.skipWord(function(err) {
+        if(err) throw err;
+      });
     },
 
     serialize: function () {

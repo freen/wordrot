@@ -1,10 +1,10 @@
 module.exports = function(app) {
 
-	var _ = require('lodash')
-	  , async = require('async')
-	  , users = app.get('users')
-	  , words = app.get('words')
-	  , abortIfNotAuthenticated = app.get('abortIfNotAuthenticated');
+	var _ = require('lodash'),
+	  async = require('async'),
+	  users = app.get('users'),
+	  words = app.get('words'),
+	  abortIfNotAuthenticated = app.get('abortIfNotAuthenticated');
 
 	app.all('/words*?', function(req,res,next) {
 	  if(!abortIfNotAuthenticated(req, res)) return;
@@ -20,7 +20,7 @@ module.exports = function(app) {
 	    res.send({success:true});
 	    return;
 	  }
-	  res.send({success:false});
+	  res.status(400).send({success:false});
 	});
 
 	app.get('/words/?', function(req, res) {
@@ -49,28 +49,33 @@ module.exports = function(app) {
 	});
 
 	app.post('/words/?', function(req, res) {
-	  var userWords = req.session.userDocument.words
-	    , userDocument = req.session.userDocument
-	    , word = req.body.word
-	    , wordEntry = _.find(userWords, function(entry) { return entry.word == word; });
+	  var userWords = req.session.userDocument.words,
+	    userDocument = req.session.userDocument,
+	    word = req.body.word,
+	    wordEntry = _.find(userWords, function(entry) { return entry.word == word; });
 	  words.fetchWord(word, function(wordDocument) {
 	    if(!wordDocument) {
-	      res.status(404);
-	      res.send({error: 'No definitions found'});
-	      return;
+        return res.status(404).send({error: 'No definitions found'});
 	    }
-	    if(undefined === wordEntry) {
-	      wordEntry = {
-	        word: word,
-	        hits: 0,
-	        misses: 0,
-	        created: new Date,
-	        modified: new Date
-	      };
-	      userWords.push(wordEntry);
-	      users.userCollection.updateById(userDocument._id, {$push: {words: wordEntry}});
-	    }
-	    res.send(wordEntry);
+	    if(undefined !== wordEntry) {
+        return res.send(wordEntry); //??
+	  	}
+	    wordEntry = {
+	      word: word,
+	      hits: 0,
+	      misses: 0,
+	      created: new Date,
+	      modified: new Date
+	    };
+	    userWords.push(wordEntry);
+	    users.userCollection.updateById(
+	      userDocument._id,
+	      {$push: {words: wordEntry}},
+	      {},
+	      function(err, result) {
+	        res.send(wordEntry);
+	      }
+	    );
 	  });
 	});
 

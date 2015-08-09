@@ -43,7 +43,7 @@ define([
         return;
       }
       $.ajax({
-        url: window.wordrot.config.apiRoot + '/auth/switch-user/' + username,
+        url: window.wordrot.config.apiRoot + '/auth/switch/' + username,
         success: function() {
           app.user.fetch();
         }

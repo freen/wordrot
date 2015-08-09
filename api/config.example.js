@@ -8,8 +8,6 @@ config.http.cookieSecret = 'secret';
 config.wordnik = {};
 config.wordnik.apiKey = 'yours';
 
-config.mongodb = {};
-config.mongodb.host = 'localhost';
-config.mongodb.database = 'wordrot-api';
+config.mongoConnectionUri = 'mongodb://user:pass@localhost:port/database';
 
 module.exports = config;
