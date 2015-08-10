@@ -10,7 +10,7 @@ define([
   // Model accessor to the current word in play
   var WordOnDeck = BaseModel.extend({
 
-    url: config.apiRoot + '/play/word-on-deck',
+    url: config.apiRoot + '/play/word-in-play',
 
     skipWord: function(callback) {
       $.ajax({

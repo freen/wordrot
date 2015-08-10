@@ -6,35 +6,6 @@ var _ = require('lodash'),
 
 describe('userSchema', function() {
 
-  describe('#findOneByName', function() {
-
-    it('should yield promise with name on success', function(done) {
-      var userModel = mongoose.model('User', userSchema),
-        stubDoc = {name:'freen'},
-        stubQuery = {findOne: function(cb) { cb(undefined, stubDoc) }},
-        stubWhere = sinon.stub(userModel, "where").returns(stubQuery);
-      userModel.findOneByName('freen')
-        .then(function (userDoc) {
-          assert.equal(userDoc, stubDoc);
-          stubWhere.restore();
-          done();
-        }, function () {});
-    });
-
-    it('should yield promise with err on fail', function(done) {
-      var userModel = mongoose.model('User', userSchema),
-        stubQuery = {findOne: function(cb) { cb('err', undefined) }},
-        stubWhere = sinon.stub(userModel, "where").returns(stubQuery);
-      userModel.findOneByName('freen')
-        .then(function () {}, function (err) {
-          assert.equal(err, 'err');
-          stubWhere.restore();
-          done();
-        });
-    });
-
-  });
-
   describe('#getPoorestPerformingWords', function () {
 
     it('should yield the words with the worst hit to miss ratio', function () {

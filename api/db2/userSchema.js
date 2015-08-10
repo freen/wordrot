@@ -11,17 +11,6 @@ var userSchema = new Schema({
   words: [{ word: String, hits: Number, misses: Number }]
 });
 
-userSchema.statics.findOneByName = function(name) {
-  var deferred = new Deferred(),
-    query = this.where({ name: name });
-  query.findOne(function (err, user) {
-    if (err) deferred.reject(err);
-    else if (!user) deferred.reject(undefined);
-    else deferred.resolve(user);
-  });
-  return deferred;
-};
-
 userSchema.methods.getPoorestPerformingWords = function(quantity) {
   this.words.sort(function(a, b) {
     var scoreA = a.hits - a.misses

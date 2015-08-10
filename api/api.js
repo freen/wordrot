@@ -1,35 +1,36 @@
 var express = require('express'),
-  //Words = require('./db/words'),
-  //Users = require('./db/users'),
-  config = require('./config');
+  config = require('./config'),
+  wordnikService = require('./services/wordnikService'),
+  authService = require('./services/authService'),
+  mongoose = require('mongoose'),
+  userSchema = require('./db2/userSchema'),
+  wordSchema = require('./db2/wordSchema');
 
 var app = express();
 
+// todo remove this: (was necessary for decoupling / testing routes)
+global.app = app;
+
 app.set('config', config);
-//app.set('users', new Users);
-//app.set('words', new Words);
+app.set('wordnik', wordnikService(app));
+app.set('auth', authService(app));
+app.set('models', {
+  user: mongoose.model('User', userSchema),
+  word: mongoose.model('Word', wordSchema)
+});
 
 app.set('abortIfNotAuthenticated', function(req, res, errorResponse) {
   errorResponse = errorResponse || {
     success: false,
     error: "You must be authenticated to use this endpoint."
   };
-  if(undefined === req.session.userDocument) {
+  if(!app.get('auth').isAuthenticated()) {
     res.status(401).send(errorResponse);
     return false;
   }
   return true;
 });
 
-app.get('/*', function(req,res,next) {
-  req.session.userDocument = req.session.userDocument || undefined;
-  res.set('Content-Type', 'application/json');
-  next();
-});
-
-require('./routes/auth')(app);
-//require('./routes/debug')(app);
-//require('./routes/play')(app);
-//require('./routes/words')(app);
+require('./routes/routes')(app);
 
 module.exports = app;
