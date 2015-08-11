@@ -7,12 +7,11 @@ module.exports = function (app) {
     next();
   });
 
-  require('./auth')(app);
-  require('./debug')(app);
-//require('./play')(app);
-
   var abortIfNotAuthenticated = app.get('abortIfNotAuthenticated'),
     playRoutes = require('./playRoutes');
+
+  require('./auth')(app);
+  require('./debug')(app);
 
   // todo shift to auth routes as general util
   app.all('/play*?', function(req,res,next) {
@@ -20,8 +19,12 @@ module.exports = function (app) {
     next();
   });
 
-  app.delete('/play/word-in-play/?',  playRoutes.skipWord);
-  app.all('/play*?',                  playRoutes.loadWordInPlay); // Subsequent play routes need to know the "word in play"
+  // testing, rm after:
+  app.get('/play/skip-word-in-play/?',  playRoutes.skipWordInPlay);
+
+  app.delete('/play/word-in-play/?',  playRoutes.skipWordInPlay);
+  app.all('/play*?',                  playRoutes.loadWordInPlay);
+  // Subsequent play routes need to know the "word in play"
   app.put('/play/answer/?',           playRoutes.submitAnswer);
   app.all('/play/word-in-play/?',     playRoutes.wordInPlay);
 

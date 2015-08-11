@@ -80,6 +80,47 @@ describe("wordnikService", function () {
         }, function () {});
     });
 
+    /**
+     * Test todo:
+     * The service should filter out definitions in the style of the latter:
+     *
+     * {
+     *   "_id": "55c969de0a0929918aace3cb",
+     *   "word": "aliquot",
+     *   "__v": 0,
+     *   "definitions": [
+     *     {
+     *       "textProns": [],
+     *       "sourceDictionary": "ahd-legacy",
+     *       "exampleUses": [],
+     *       "relatedWords": [],
+     *       "labels": [],
+     *       "citations": [],
+     *       "word": "aliquot",
+     *       "partOfSpeech": "adjective",
+     *       "attributionText": "from The American Heritage® Dictionary of the English Language, 4th Edition",
+     *       "sequence": "0",
+     *       "text": "Of, relating to, or denoting an exact divisor or factor of a quantity, especially of an integer.",
+     *       "score": 0
+     *     },
+     *     {
+     *       "textProns": [],
+     *       "sourceDictionary": "ahd-legacy",
+     *       "exampleUses": [],
+     *       "relatedWords": [],
+     *       "labels": [],
+     *       "citations": [],
+     *       "word": "aliquot",
+     *       "partOfSpeech": "noun",
+     *       "attributionText": "from The American Heritage® Dictionary of the English Language, 4th Edition",
+     *       "sequence": "1",
+     *       "text": "An aliquot part.",
+     *       "score": 0
+     *     }
+     *   ]
+     * }
+     */
+
   });
 
 });

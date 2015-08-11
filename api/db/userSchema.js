@@ -1,7 +1,7 @@
 var _ = require('lodash'),
   mongoose = require('mongoose'),
   Schema = mongoose.Schema,
-  Deferred = require("promised-io/promise").Deferred;
+  Promise = require('bluebird');
 
 var userSchema = new Schema({
   name: { type: String, index: true },
@@ -21,22 +21,21 @@ userSchema.methods.getPoorestPerformingWords = function(quantity) {
 };
 
 userSchema.methods.getNewWordInPlay = function() {
-  var deferred = new Deferred(),
-    that = this;
-  if (this.words.length === 0) {
-    deferred.reject(undefined);
-    return deferred;
-  }
-  var poorest = this.getPoorestPerformingWords(5);
-  if (poorest.length > 1 && this.wordInPlay !== '') {
-    _.remove(poorest, function(w) { return w.word == that.wordInPlay; });
-  }
-  this.wordInPlay = _.sample(poorest).word;
-  this.save(function (err) {
-    if (err) deferred.reject(err);
-    deferred.resolve(that.wordInPlay);
+  var that = this;
+  return new Promise(function (resolve, reject) {
+    if (this.words.length === 0) {
+      throw new Error("No words");
+    }
+    var poorest = that.getPoorestPerformingWords(5);
+    if (poorest.length > 1 && that.wordInPlay !== '') {
+      _.remove(poorest, function(w) { return w.word == that.wordInPlay; });
+    }
+    that.wordInPlay = _.sample(poorest).word;
+    that.save(function (err) {
+      if (err) return reject(err);
+      resolve(that.wordInPlay);
+    });
   });
-  return deferred;
 };
 
 userSchema.methods.getWordStats = function(wordName) {

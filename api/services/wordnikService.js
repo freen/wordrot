@@ -1,7 +1,7 @@
 var Wordnik = require('wordnik'),
   mongoose = require('mongoose'),
-  wordSchema = require('../db2/wordSchema'),
-  Deferred = require("promised-io/promise").Deferred;
+  wordSchema = require('../db/wordSchema'),
+  Promise = require('bluebird');
 
 function WordnikService(app) {
   this.ERR_API_NO_DEFINITIONS = 'api_empty_definitions';
@@ -14,48 +14,51 @@ function WordnikService(app) {
  * Check DB for cache; fallback to Wordnik API call.
  */
 WordnikService.prototype.getWord = function(word) {
-  var that = this,
-    deferred = new Deferred();
-  this.wordModel.findOne({word: word}, function(err, wordDocument) {
-    if (wordDocument) {
-      return deferred.resolve(wordDocument);
-    }
-    that.wordnik.definitions(word, function(e, defs) {
-      // todo e ?
-      if(0 == defs.length) {
-        return deferred.reject(that.ERR_API_NO_DEFINITIONS);
+  var that = this;
+  // todo use bluebird promisify for mongoose promise chain below
+  return new Promise(function (resolve, reject) {
+    that.wordModel.findOne({word: word}, function(err, wordDocument) {
+      if (wordDocument) {
+        return resolve(wordDocument);
       }
-      wordDocument = new that.wordModel({
-        word: word,
-        definitions: defs
-      });
-      wordDocument.save(function(err, wordDocument) {
-        if (wordDocument) return deferred.resolve(wordDocument);
-        deferred.reject(err || false);
+      debugger;
+      that.wordnik.definitions(word, function(e, defs) {
+        if (e) return reject(e);
+        if(0 == defs.length) {
+          return reject(that.ERR_API_NO_DEFINITIONS);
+        }
+        wordDocument = new that.wordModel({
+          word: word,
+          definitions: defs
+        });
+        wordDocument.save(function(err, wordDocument) {
+          if (wordDocument) return resolve(wordDocument);
+          reject(err || false);
+        });
       });
     });
   });
-  return deferred;
 };
 
 // todo consolidate into batch requests to cache / api
+// todo reconcile (?) promise pattern w/ async lib usage
 WordnikService.prototype.fetchWords = function(words, callback) {
   var that = this,
-    deferred = new Deferred(),
     wordDocuments = [];
-  async.each(
-    words,
-    function(word, callback) {
-      that.fetchWord(word, function(wordDocument) {
-        wordDocuments.push(wordDocument);
-      });
-    },
-    function(err) {
-      if(err) return deferred.reject(err);
-      deferred.resolve(wordDocuments);
-    }
-  );
-  return deferred;
+  return new Promise(function (resolve, reject) {
+    async.each(
+      words,
+      function(word, callback) {
+        that.getWord(word, function(wordDocument) {
+          wordDocuments.push(wordDocument);
+        });
+      },
+      function(err) {
+        if(err) return reject(err);
+        resolve(wordDocuments);
+      }
+    );
+  });
 };
 
 module.exports = function (app) {

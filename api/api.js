@@ -3,8 +3,8 @@ var express = require('express'),
   wordnikService = require('./services/wordnikService'),
   authService = require('./services/authService'),
   mongoose = require('mongoose'),
-  userSchema = require('./db2/userSchema'),
-  wordSchema = require('./db2/wordSchema');
+  userSchema = require('./db/userSchema'),
+  wordSchema = require('./db/wordSchema');
 
 var app = express();
 

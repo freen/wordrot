@@ -1,5 +1,13 @@
-var mongo = require('mongoskin')
-  , format = require('util').format
-  , config = require('../config');
+var mongoose = require('mongoose'),
+  config = require('../config'),
+  uristring = config.mongoConnectionUri;
 
-module.exports = mongo.db(format("mongodb://%s/%s", config.mongodb.host, config.mongodb.database));
+mongoose.connect(uristring, function (err, res) {
+  if (err) console.log ('Failed to connect to Mongo: ' + uristring + '. ' + err);
+  else console.log ('Connected to Mongo: ' + uristring);
+});
+
+// todo dupe?
+global.db = mongoose.createConnection(uristring);
+
+module.exports = db;

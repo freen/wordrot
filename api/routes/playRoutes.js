@@ -1,20 +1,21 @@
 var _ = require('lodash'),
-  async = require('async');
+  async = require('async'),
+  Promise = require('bluebird');
 
-exports.skipWord = function(req, res) {
+exports.skipWordInPlay = function(req, res) {
   app.get('auth')
     .getCurrentUserDocument()
-    .then(function(userDocument) {
-      return userDocument.getNewWordInPlay();
+    .done(function(userDocument) {
+      userDocument.getNewWordInPlay()
+        .done(function(word) {
+          res.send({word:word});
+        }, function(err) {
+          res.status(500).send({error:"Failed to retrieve new word in play.", debug:err});
+          return Promise.reject();
+        });
     }, function(err) {
-      res.status(500).respond({error:"User lookup failed"});
-      return this;
-    })
-    .then(function(word) {
-      res.send({word:word});
-    }, function(err) {
-      res.status(500).send({err:err});
-    }).done();
+      res.status(500).send({error:"User lookup failed", debug:err});
+    });
 };
 
 exports.loadWordInPlay = function(req,res,next) {
@@ -68,24 +69,3 @@ exports.wordInPlay = function(req, res, wordOnDeck) {
   var response = _.assign({success: true}, req.session.wordOnDeck);
   res.send(response);
 };
-
-//module.exports = function(app) {
-//
-//  var _ = require('lodash'),
-//    async = require('async'),
-//    abortIfNotAuthenticated = app.get('abortIfNotAuthenticated');
-//
-//  app.all('/play*?', function(req,res,next) {
-//    if(!abortIfNotAuthenticated(req, res)) return;
-//    next();
-//  });
-//
-//  app.delete('/play/word-in-play/?', playRoutes.skipWord);
-//
-//  // Subsequent play routes need to know the "word in play"
-//  app.all('/play*?', playRoutes.postSkipLoadWordInPlay);
-//
-//  app.put('/play/answer/?', playRoutes.submitAnswer);
-//  app.all('/play/word-in-play/?', playRoutes.wordInPlay);
-//
-//};

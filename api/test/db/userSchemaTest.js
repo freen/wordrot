@@ -2,7 +2,7 @@ var _ = require('lodash'),
   assert = require("assert"),
   sinon = require("sinon"),
   mongoose = require('mongoose'),
-  userSchema = require("../../db2/userSchema");
+  userSchema = require("../../db/userSchema");
 
 describe('userSchema', function() {
 

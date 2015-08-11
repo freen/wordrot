@@ -1,7 +1,8 @@
-var Deferred = require('promised-io/promise').Deferred;
+var Promise = require('bluebird');
 
 function AuthService (app) {
   this.app = app;
+  //this.session = app.request.session;
   this.ERR_NOT_AUTHENTICATED = 'err_not_authenticated';
 }
 
@@ -19,17 +20,17 @@ AuthService.prototype.isAuthenticated = function () {
 };
 
 AuthService.prototype.getCurrentUserDocument = function (cb) {
-  var deferred = new Deferred();
-  if (!this.isAuthenticated()) {
-    deferred.reject(this.ERR_NOT_AUTHENTICATED);
-    return deferred;
-  }
-  this.app.get('models').user.findOne({name:this.session.userDocument.name})
-    .exec(function(err, userDocument) {
-      if (userDocument) return deferred.resolve(userDocument);
-      deferred.reject(err || false);
-    });
-  return deferred;
+  var that = this;
+  return new Promise(function (resolve, reject) {
+    if (!that.isAuthenticated()) {
+      return reject(this.ERR_NOT_AUTHENTICATED);
+    }
+    that.app.get('models').user.findOne({name:that.session.userDocument.name})
+      .exec(function(err, userDocument) {
+        if (userDocument) return resolve(userDocument);
+        reject(err || false);
+      });
+  });
 };
 
 module.exports = function (app) {

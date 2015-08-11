@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-  userSchema = require('../db2/userSchema.js');
+  userSchema = require('../db/userSchema.js');
 
 module.exports = function(app) {
 
